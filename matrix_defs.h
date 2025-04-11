@@ -8,8 +8,10 @@
 /* This typedef must be known to the Bison parser before the %union */
 typedef struct {
     char *name;
+    char *expr;
     int rows;
     int cols;
+    double fval;
 } MatrixVal;
 
 #endif /* MATRIX_DEFS_H */

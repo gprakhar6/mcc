@@ -1,17 +1,26 @@
 #include <stdio.h>
 
+
 int main() {
     printf("Before DSL block\n");
-    
-    @matrix{
-        matrix A[3][4];
-        matrix B[3][4];
-        matrix C[3][4];
-        matrix D[3][4];
-
-        A = (B + C) + D;
+    double n = 0.001;
+    double x[6][1] = {0.0, -15.0, 0.0, -0.1, 0.0, 0.0};
+    double f[6][6] = {
+	{0.0,		0.0,	0.0,	1.0,	0.0,	0.0},	
+	{0.0,		0.0,	0.0,	0.0,	1.0,	0.0},	
+	{0.0,		0.0,	0.0,	0.0,	0.0,	1.0},	
+	{3.0*n*n,	0.0,	0.0,	0.0,	2.0*n,	0.0},	
+	{0.0,		0.0,	0.0,	-2.0*n, 0.0,	0.0},	
+	{0.0,		0.0,	-n*n,	0.0,	0.0,	0.0},	
+    };
+    int i;
+    for(i = 0; i < 100; i++) {
+	@matrix {
+	    matrix x[6][1];
+	    matrix f[6][6];
+	    x = (1.0+f) * x;
+	}
     }
-    
-    printf("After DSL block\n");
+    ("After DSL block\n");
     return 0;
 }

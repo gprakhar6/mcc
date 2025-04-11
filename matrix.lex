@@ -14,7 +14,7 @@ int inMatrix = 0;
 
 %%
 
-"@matrix{" {
+"@matrix"[ \t\n]*"{" {
     inMatrix = 1;
     BEGIN(MATRIX);
     /* Begin DSL output */
@@ -33,16 +33,20 @@ int inMatrix = 0;
               printf("/* End Generated Matrix Code */\n\n");
             }
     "matrix"  { return MATRIX_KW; }
-    [0-9]+    { yylval.str = strdup(yytext); return INT; }
+    [0-9]+    { yylval.ival = atoi(yytext); return INT; }
     [A-Za-z][A-Za-z0-9_]*  { yylval.str = strdup(yytext); return ID; }
-    "="       { return '='; }
-    ";"       { return ';'; }
-    "+"       { return '+'; }
-    "*"       { return '*'; }
-    "["       { return '['; }
-    "]"       { return ']'; }
-    "("       { return '('; }
-    ")"       { return ')'; }
+    (([0-9]+)?\.[0-9]+)|([0-9]+\.([0-9]+*)?) { yylval.fval = atof(yytext); return FLOAT; }
+    "="        { return '='; }
+    ";"        { return ';'; }
+    "+"        { return '+'; }
+    "-"        { return '-'; }
+    "~"        { return '~'; }
+    "$"        { return '$'; }
+    "*"        { return '*'; }
+    "["        { return '['; }
+    "]"        { return ']'; }
+    "("        { return '('; }
+    ")"        { return ')'; }
     [ \t\r\n]+  { /* skip whitespace in DSL region */ }
     .         { /* ignore unexpected characters */ }
 }
