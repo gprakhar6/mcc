@@ -19,9 +19,8 @@ int main() {
 	@matrix {
 	    matrix x[6][1];
 	    matrix f[6][6];
-	    // addition of the state vector
-	    /* will it be okay */
 	    x = (1.0+f) * x;
+	    $m;
 	}
     }
     ("After DSL block\n");
