@@ -1,0 +1,8 @@
+*
+!matrix.y
+!matrix.lex
+!matrix_defs.h
+!test.c
+!makefile
+!.gitignore
+!README.md
