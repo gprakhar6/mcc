@@ -27,6 +27,30 @@ int inMatrix = 0;
 }
 
 <MATRIX>{
+    "/*" {
+	/* Ignore everything until the end of the comment */
+	int c;
+	printf("/*");
+	while ((c = input()) != EOF) {
+	    putchar(c);
+	    if (c == '*' && input() == '/') {
+		putchar('/'); putchar('\n');
+		break;
+	    }
+	}
+    }
+    
+    "//" {
+	/* Ignore everything until the end of the line */
+	int c;
+	printf("//");
+	while ((c = input()) != EOF && c != '\n') {
+	    putchar(c);
+	    /* Do nothing */
+	}
+	putchar('\n');
+    }
+    
     "}"    {
               inMatrix = 0;
               BEGIN(INITIAL);

@@ -13,11 +13,14 @@ int main() {
 	{0.0,		0.0,	0.0,	-2.0*n, 0.0,	0.0},	
 	{0.0,		0.0,	-n*n,	0.0,	0.0,	0.0},	
     };
+    
     int i;
-    for(i = 0; i < 100; i++) {
+    for(i = 0; i < 10000; i++) {
 	@matrix {
 	    matrix x[6][1];
 	    matrix f[6][6];
+	    // addition of the state vector
+	    /* will it be okay */
 	    x = (1.0+f) * x;
 	}
     }
