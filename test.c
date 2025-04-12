@@ -19,8 +19,8 @@ int main() {
 	@matrix {
 	    matrix x[6][1];
 	    matrix f[6][6];
-	    x = (1.0+f) * x;
-	    $m;
+	    x = (1.0+f)*x;
+	    $~(x[0:2][0]);
 	}
     }
     ("After DSL block\n");

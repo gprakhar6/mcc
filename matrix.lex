@@ -62,6 +62,7 @@ int inMatrix = 0;
     (([0-9]+)?\.[0-9]+)|([0-9]+\.([0-9]+*)?) { yylval.fval = atof(yytext); return FLOAT; }
     "="        { return '='; }
     ";"        { return ';'; }
+    ":"        { return ':'; }
     "+"        { return '+'; }
     "-"        { return '-'; }
     "~"        { return '~'; }
@@ -71,6 +72,7 @@ int inMatrix = 0;
     "]"        { return ']'; }
     "("        { return '('; }
     ")"        { return ')'; }
+    "|"        { return '|'; }
     [ \t\r\n]+  { /* skip whitespace in DSL region */ }
     .         { /* ignore unexpected characters */ }
 }

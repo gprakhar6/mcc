@@ -11,7 +11,14 @@ typedef struct {
     char *expr;
     int rows;
     int cols;
+    int isscalar;
     double fval;
 } MatrixVal;
+
+typedef struct {
+    int sr; // start range 
+    int er; // end range
+    int cr; // complete range or not
+} MatrixSlice;
 
 #endif /* MATRIX_DEFS_H */
