@@ -82,7 +82,7 @@
     static int temp_count = 0;
     static char empty_string[] = "";
     static char vecprint_string[] =
-	"printf(\"%%s:\",\"%s\");"
+	"printf(\"%%s: \",\"%s\");"
 	"for(int _i=0;_i<%d;_i++)" "{"
 	    "for(int _j=0;_j<%d;_j++)"
 	         "printf(\"%%20.15lf \", %s[_i][_j]);"
