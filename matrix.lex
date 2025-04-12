@@ -62,11 +62,12 @@ int inMatrix = 0;
     (([0-9]+)?\.[0-9]+)|([0-9]+\.([0-9]+*)?) { yylval.fval = atof(yytext); return FLOAT; }
     "="        { return '='; }
     ";"        { return ';'; }
-    ":"        { return ':'; }
+    ":"        { return ':'; } // range operator
     "+"        { return '+'; }
     "-"        { return '-'; }
-    "~"        { return '~'; }
-    "$"        { return '$'; }
+    "~"        { return '~'; } // transpose operator
+    "%"        { return '%'; } // diagonal operator
+    "$"        { return '$'; } // print operator
     "*"        { return '*'; }
     "["        { return '['; }
     "]"        { return ']'; }

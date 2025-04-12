@@ -144,6 +144,18 @@
 	    "for(int _j=%d;_j<%d;_j++)"
 	        "%s[_i][_j] = %s[_i][_j-%d];"
 	"}\n";
+
+    static char matrixdiag_string[] =
+	"double %s[%d][%d];\n"
+	"{\n"
+	"%s"
+	"for(int _i=0;_i<%d;_i++):"
+	    "%s[0][_i] = %s[_i][_i];"
+	"}\n";
+    static char matrixdiagassign_string[] =
+	"for(int _i=0;_i<%d;_i++)"
+	    "{%s[_i][_i] = %s[0][_i];}\n";
+    
     char *new_temp_name(void) {
 	char buf[32];
 	sprintf(buf, "Temp%d", temp_count++);
@@ -269,7 +281,7 @@
  /* Operator precedences */
 %nonassoc '='
 %left '+' '-' '*' '|'
-%right '~'
+%right '~' '%'
 %right '$'
 %nonassoc SLICE
 %nonassoc '['  // give [] its own precedence
@@ -393,6 +405,33 @@ ID '[' slice ']' '[' slice ']' '=' expr ';' {
 	   $2->rows, $2->cols,
 	   $2->name, $2->rows, $2->cols);
     free($2);
+} | '%' ID '=' expr ';' {
+    char *expr;
+    MatrixVal *temp;
+    MatrixEntry *m = lookup_matrix($2);
+    
+    if($4->expr == NULL)
+	expr = empty_string;
+    else {
+	$4->expr = indent_expr($4->expr);
+	expr = $4->expr;
+    }
+
+    if (!(($4->rows == 1) && ($4->cols == m->cols)
+	  && (m->rows == m->cols))) {
+	printf("Bad diagonal assignment %% %s[%d][%d] = [%d][%d]\n",
+	       m->name, m->rows, m->cols,
+	       $4->rows, $4->cols);
+	yyerror("Bad diagonal assignment\n");
+	exit(1);
+    }
+
+    printf("{%s\n", expr);
+    printf(matrixdiagassign_string,
+	   $4->cols, $2, $4->name);
+    printf("}\n");
+    
+    free_matrix_val($4);
 }
 ;
 
@@ -408,6 +447,33 @@ term {
     free_matrix_val($1);
     free($3);
     free($6);
+} | '%' expr %prec '%' {
+    char *expr;
+    if($2->rows != $2->cols) {
+	printf("Diagonal Extract for wrong non square matrix [%d][%d]\n",
+	       $2->rows, $2->cols);
+	yyerror("Bad diagonal operator %");
+	exit(1);
+    }
+
+    if($2->expr == NULL)
+	expr = empty_string;
+    else {
+	$2->expr = indent_expr($2->expr);
+	expr = $2->expr;
+    }
+    MatrixVal *temp = new_temp(1, $2->rows);
+
+    asprintf(&temp->expr, matrixdiag_string,
+	     temp->name, temp->rows, temp->cols,
+	     expr,
+	     $2->rows,
+	     temp->name, $2->name);
+    
+    free_matrix_val($2);
+
+    $$ = temp;
+    
 } | '~' expr %prec '~' {
     MatrixVal *temp = new_temp($2->cols, $2->rows);
     char *expr;
