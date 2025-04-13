@@ -96,7 +96,7 @@ static char matdiagvectorop_string[] = "double %s[%d][%d];\n"
         "for(int _i=0;_i<%d;_i++)" "{"
             "for(int _j=0;_j<%d;_j++)"
                 "{%s[_i][_j] = %s[_i][_j];}"
-            "%s[_i][_i] %c= %s[0][_i];"
+            "%s[_i][_i] = %s[_i][_i] %c %s[0][_i];"
         "}\n"
     "}\n";
 static char matdiagscalarop_string[] = "double %s[%d][%d];\n"
@@ -267,8 +267,8 @@ static char matrixdiag_string[] =
     "{\n"
     "    "
         "%s"
-        "for(int _i=0;_i<%d;_i++):"
-            "%s[0][_i] = %s[_i][_i];"
+        "for(int _i=0;_i<%d;_i++)"
+            "{%s[0][_i] = %s[_i][_i];}"
     "}\n";
 static char matrixdiagassign_string[] =
     "for(int _i=0;_i<%d;_i++)"
@@ -479,7 +479,7 @@ MatrixVal* matrix_add_expr(MatrixVal *e1, MatrixVal *e2)
     if((e1->rows != e2->rows) || (e1->cols != e2->cols)) {
 	if((e1->rows == e1->cols) && (e1->rows != 1)) {
 	    if ((e1->rows == e2->cols) && (e2->rows == 1)) 
-		goto add_right_column_vector_to_diagonal;
+		goto add_right_row_vector_to_diagonal;
 	    else if((e2->rows == 1) && (e2->cols == 1))
 		goto add_right_scalar_to_diagonal;
 	    else
@@ -487,7 +487,7 @@ MatrixVal* matrix_add_expr(MatrixVal *e1, MatrixVal *e2)
 	}
 	else if((e2->rows == e2->cols) && (e2->rows != 1)) {
 	    if ((e1->cols == e2->rows) && (e1->rows == 1))
-		goto add_left_column_vector_to_diagonal;
+		goto add_left_row_vector_to_diagonal;
 	    else if((e1->rows == 1) && (e1->cols == 1))
 		goto add_left_scalar_to_diagonal;
 	    else
@@ -506,14 +506,14 @@ MatrixVal* matrix_add_expr(MatrixVal *e1, MatrixVal *e2)
 	     expr,
 	     temp->rows, temp->cols, temp->name, e1->name, '+', e2->name);
     goto add_op_fin;
-add_right_column_vector_to_diagonal:
+add_right_row_vector_to_diagonal:
     temp = new_temp(e1->rows, e1->cols);
-    temp = new_temp(e2->rows, e2->cols);
     asprintf(&temp->expr, matdiagvectorop_string,
 	     temp->name, temp->rows, temp->cols,
 	     expr,
-	     temp->rows, temp->cols, temp->name, e1->name,
-	     temp->name, '+', e2->name);
+	     temp->rows, temp->cols,
+	     temp->name, e1->name,
+	     temp->name, e1->name, '+', e2->name);
     goto add_op_fin;
 add_right_scalar_to_diagonal:
     temp = new_temp(e1->rows, e1->cols);
@@ -523,13 +523,14 @@ add_right_scalar_to_diagonal:
 	     temp->rows, temp->cols, temp->name, e1->name,
 	     temp->name, '+', e2->fval);
     goto add_op_fin;
-add_left_column_vector_to_diagonal:
+add_left_row_vector_to_diagonal:
     temp = new_temp(e2->rows, e2->cols);
     asprintf(&temp->expr, matdiagvectorop_string,
 	     temp->name, temp->rows, temp->cols,
 	     expr,
-	     temp->rows, temp->cols, temp->name, e2->name,
-	     temp->name, '+', e1->name);
+	     temp->rows, temp->cols,
+	     temp->name, e2->name,
+	     temp->name, e2->name, '+', e1->name);
     goto add_op_fin;
 add_left_scalar_to_diagonal:
     temp = new_temp(e2->rows, e2->cols);
@@ -553,7 +554,7 @@ MatrixVal* matrix_sub_expr(MatrixVal *e1, MatrixVal *e2)
     if((e1->rows != e2->rows) || (e1->cols != e2->cols)) {
 	if((e1->rows == e1->cols) && (e1->rows != 1)) {
 	    if ((e1->rows == e2->cols) && (e2->rows == 1)) 
-		goto sub_right_column_vector_to_diagonal;
+		goto sub_right_row_vector_to_diagonal;
 	    else if(e2->isscalar == 1)
 		goto sub_right_scalar_to_diagonal;
 	    else
@@ -561,7 +562,7 @@ MatrixVal* matrix_sub_expr(MatrixVal *e1, MatrixVal *e2)
 	}
 	else if((e2->rows == e2->cols) && (e2->rows != 1)) {
 	    if ((e1->cols == e2->rows) && (e1->rows == 1))
-		goto sub_left_column_vector_to_diagonal;
+		goto sub_left_row_vector_to_diagonal;
 	    else if(e1->isscalar == 1)
 		goto sub_left_scalar_to_diagonal;
 	    else
@@ -582,14 +583,14 @@ MatrixVal* matrix_sub_expr(MatrixVal *e1, MatrixVal *e2)
 	     expr,
 	     temp->rows, temp->cols, temp->name, e1->name, '-', e2->name);
     goto sub_op_fin;
-sub_right_column_vector_to_diagonal:
+sub_right_row_vector_to_diagonal:
     temp = new_temp(e1->rows, e1->cols);
     temp = new_temp(e2->rows, e2->cols);
     asprintf(&temp->expr, matdiagvectorop_string,
 	     temp->name, temp->rows, temp->cols,
 	     expr,
 	     temp->rows, temp->cols, temp->name, e1->name,
-	     temp->name, '-', e2->name);
+	     temp->name, e1->name, '-', e2->name);
     goto sub_op_fin;
 sub_right_scalar_to_diagonal:
     temp = new_temp(e1->rows, e1->cols);
@@ -599,12 +600,13 @@ sub_right_scalar_to_diagonal:
 	     temp->rows, temp->cols, temp->name, e1->name,
 	     temp->name, '-', e2->fval);
     goto sub_op_fin;
-sub_left_column_vector_to_diagonal:
+sub_left_row_vector_to_diagonal:
     temp = new_temp(e2->rows, e2->cols);
     asprintf(&temp->expr, matdiagleftminusvector_string,
 	     temp->name, temp->rows, temp->cols,
 	     expr,
-	     temp->rows, temp->cols, temp->name, e2->name,
+	     temp->rows, temp->cols,
+	     temp->name, e2->name,
 	     temp->name,  e1->name);
     goto sub_op_fin;
 sub_left_scalar_to_diagonal:
@@ -612,8 +614,9 @@ sub_left_scalar_to_diagonal:
     asprintf(&temp->expr, matdiagminusleftscalar_string,
 	     temp->name, temp->rows, temp->cols,
 	     expr,
-	     temp->rows, temp->cols, temp->name, e2->name,
-	     temp->name, '-', e1->fval);
+	     temp->rows, temp->cols,
+	     temp->name, e2->name,
+	     temp->name, e1->fval);
     goto sub_op_fin;
 sub_op_fin:
     free(expr);
