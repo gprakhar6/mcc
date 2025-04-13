@@ -69,6 +69,7 @@ int inMatrix = 0;
     "%"        { return '%'; } // diagonal operator
     "$"        { return '$'; } // print operator
     "*"        { return '*'; }
+    "/"        { return '/'; }
     "["        { return '['; }
     "]"        { return ']'; }
     "("        { return '('; }

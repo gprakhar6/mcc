@@ -28,7 +28,7 @@
 %type <ms> slice
  /* Operator precedences */
 %nonassoc '='
-%left '+' '-' '*' '|' '_'
+%left '+' '-' '*' '/' '|' '_'
 %right '~' '%'
 %right '$'
 %nonassoc SLICE
@@ -223,6 +223,10 @@ term {
     free_matrix_val($3);
 } | expr '*' term {
     $$ = matrix_mul_expr($1, $3);
+    free_matrix_val($1);
+    free_matrix_val($3);
+} | expr '/' term {
+    $$ = matrix_div_expr($1, $3);
     free_matrix_val($1);
     free_matrix_val($3);
 }
