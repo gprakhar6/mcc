@@ -14,6 +14,21 @@ int inMatrix = 0;
 
 %%
 
+"/*" {
+    /* Ignore everything until the end of the comment */
+    int c;
+    while ((c = input()) != EOF) {
+	if (c == '*' && input() == '/')
+	    break;
+    }
+ }
+    
+"//" {
+    /* Ignore everything until the end of the line */
+    int c;
+    while ((c = input()) != EOF && c != '\n');
+}
+
 "@matrix"[ \t\n]*"{" {
     inMatrix = 1;
     BEGIN(MATRIX);

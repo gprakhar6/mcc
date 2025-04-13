@@ -395,7 +395,6 @@ MatrixVal* create_submatrix(MatrixVal *m,
 	     start_row, end_row, start_col, end_col,
 	     temp->name, start_row, start_col, m->name);
 
-    free(expr);
     return temp;
 }	
 
@@ -418,7 +417,6 @@ void mat_assign_expr(MatrixEntry *dest, MatrixVal *e)
     printf(matrixcopy_string, dest->rows, dest->cols,
 	   dest->name, e->name);
     printf("}\n");
-    free(expr);
 }
 
 void matrix_slice_assign(char *id_name,
@@ -470,7 +468,6 @@ void matrix_slice_assign(char *id_name,
 	   start_row, end_row, start_col, end_col,
 	   id_name, e->name, start_row, start_col);
     printf("}\n");
-    free(expr);
 }
 
 MatrixVal* matrix_add_expr(MatrixVal *e1, MatrixVal *e2)

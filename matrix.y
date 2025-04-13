@@ -48,23 +48,21 @@ MATRIX_KW ID '[' INT ']' '[' INT ']' ';' {
     int r = $4;
     int c = $7;
     add_matrix($2, r, c);
-    /* Emit a declaration in the generated C code */
-    //printf("double %s[%d][%d];\n", $2, r, c);
-    //free($2); free($4); free($7);
+    free($2);
 }
 | /* Assignment statement: e.g., A = (B + C) + D; */
 ID '=' expr ';' {
     MatrixEntry *dest = lookup_matrix($1);
     mat_assign_expr(dest, $3);
     free($1);
-    free($3);
+    free_matrix_val($3);
 } |
 ID '[' slice ']' '[' slice ']' '=' expr ';' {
     matrix_slice_assign($1, $3, $6, $9);
     free($1);
     free($3);
     free($6);
-    free($9);
+    free_matrix_val($9);
 } | '$' expr ';' %prec '$' {
     char *expr;
     const char *printstr;
@@ -77,7 +75,7 @@ ID '[' slice ']' '[' slice ']' '=' expr ';' {
     printf(printstr, $2->name,
 	   $2->rows, $2->cols,
 	   $2->name, $2->rows, $2->cols);
-    free($2);
+    free_matrix_val($2);
 } | '%' ID '=' expr ';' {
     char *expr;
     MatrixVal *temp;
@@ -97,6 +95,7 @@ ID '[' slice ']' '[' slice ']' '=' expr ';' {
 	   $4->cols, $2, $4->name);
     printf("}\n");
     
+    free($2);
     free_matrix_val($4);
 }
 ;
