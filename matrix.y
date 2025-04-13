@@ -35,6 +35,7 @@
 %right '$'
 %nonassoc SLICE
 %nonassoc '[' ']'  // give [] its own precedence
+%nonassoc UMINUS
 %%
 
 program:
@@ -69,12 +70,12 @@ ID '[' slice ']' '[' slice ']' '=' expr ';' {
     gen_expr(&expr, $2);
     printf("%s", expr);
     if($2->rows == 1)
-	printstr = vecprint_string;
+        printstr = vecprint_string;
     else
-	printstr = matprint_string;
+        printstr = matprint_string;
     printf(printstr, $2->name,
-	   $2->rows, $2->cols,
-	   $2->name, $2->rows, $2->cols);
+           $2->rows, $2->cols,
+           $2->name, $2->rows, $2->cols);
     free_matrix_val($2);
 } | '%' ID '=' expr ';' {
     char *expr;
@@ -83,16 +84,16 @@ ID '[' slice ']' '[' slice ']' '=' expr ';' {
 
     gen_expr(&expr, $4);
     if (!(($4->rows == 1) && ($4->cols == m->cols)
-	  && (m->rows == m->cols))) {
-	printf("Bad diagonal assignment %% %s[%d][%d] = [%d][%d]\n",
-	       m->name, m->rows, m->cols,
-	       $4->rows, $4->cols);
-	yyerror("Bad diagonal assignment\n");
-	exit(1);
+          && (m->rows == m->cols))) {
+        printf("Bad diagonal assignment %% %s[%d][%d] = [%d][%d]\n",
+               m->name, m->rows, m->cols,
+               $4->rows, $4->cols);
+        yyerror("Bad diagonal assignment\n");
+        exit(1);
     }
     printf("{%s\n", expr);
     printf(matrixdiagassign_string,
-	   $4->cols, $2, $4->name);
+           $4->cols, $2, $4->name);
     printf("}\n");
     
     free($2);
@@ -111,33 +112,44 @@ term {
 } | '%' expr %prec '%' {
     char *expr;
     if($2->rows != $2->cols) {
-	printf("Diagonal Extract for wrong non square matrix [%d][%d]\n",
-	       $2->rows, $2->cols);
-	yyerror("Bad diagonal operator %");
-	exit(1);
+        printf("Diagonal Extract for wrong non square matrix [%d][%d]\n",
+               $2->rows, $2->cols);
+        yyerror("Bad diagonal operator %");
+        exit(1);
     }
 
     gen_expr(&expr, $2);
     MatrixVal *temp = new_temp(1, $2->rows);
 
     asprintf(&temp->expr, matrixdiag_string,
-	     temp->name, temp->rows, temp->cols,
-	     expr,
-	     $2->rows,
-	     temp->name, $2->name);
+             temp->name, temp->rows, temp->cols,
+             expr,
+             $2->rows,
+             temp->name, $2->name);
     
     free_matrix_val($2);
 
     $$ = temp;
     
+} | '-' expr %prec UMINUS {
+    MatrixVal *temp = new_temp($2->rows, $2->cols);
+    char *expr;
+    gen_expr(&expr, $2);
+    asprintf(&temp->expr, matuminus_string,
+             temp->name, temp->rows, temp->cols,
+             expr,
+             temp->rows, temp->cols,
+             temp->name, $2->name);
+    free_matrix_val($2);
+    $$ = temp;
 } | '~' expr %prec '~' {
     MatrixVal *temp = new_temp($2->cols, $2->rows);
     char *expr;
     gen_expr(&expr, $2);
     asprintf(&temp->expr, mattranspose_string,
-	     temp->name, temp->rows, temp->cols,
-	     expr,
-	     temp->rows, temp->cols, temp->name, $2->name);
+             temp->name, temp->rows, temp->cols,
+             expr,
+             temp->rows, temp->cols, temp->name, $2->name);
     free_matrix_val($2);
     $$ = temp;
 } | expr '|' expr {
@@ -149,24 +161,24 @@ term {
     expr = indent_expr(expr);
 
     if($1->rows != $3->rows) {
-	printf("Incorrect row sizes for column concat left:%d,right:%d\n",
-	       $1->rows, $3->rows);
-	yyerror("Incorrect row size for column concat\n");
-	exit(1);
+        printf("Incorrect row sizes for column concat left:%d,right:%d\n",
+               $1->rows, $3->rows);
+        yyerror("Incorrect row size for column concat\n");
+        exit(1);
     }
     r = $1->rows;
     c = $1->cols + $3->cols;
     temp = new_temp(r, c);
 
     asprintf(&temp->expr, matrixcolconcat_string,
-	     temp->name, r, c,
-	     expr,
-	     $1->rows,
-	     $1->cols,
-	     temp->name, $1->name,
-	     $1->rows,
-	     $1->cols, c,
-	     temp->name, $3->name, $1->cols);
+             temp->name, r, c,
+             expr,
+             $1->rows,
+             $1->cols,
+             temp->name, $1->name,
+             $1->rows,
+             $1->cols, c,
+             temp->name, $3->name, $1->cols);
     
     free_matrix_val($1);
     free_matrix_val($3);
@@ -178,32 +190,32 @@ term {
     int r, c;
     // TBD is this really required?
     if($1->expr == NULL) {
-	gen_expr(&expr, $3);
+        gen_expr(&expr, $3);
     }
     else {
-	$1->expr = indent_expr($1->expr);
-	expr = $1->expr;
+        $1->expr = indent_expr($1->expr);
+        expr = $1->expr;
     }
 
     if($1->cols != $3->cols) {
-	printf("Incorrect col sizes for row concat left:%d,right:%d\n",
-	       $1->rows, $3->rows);
-	yyerror("Incorrect col size for row concat\n");
-	exit(1);
+        printf("Incorrect col sizes for row concat left:%d,right:%d\n",
+               $1->rows, $3->rows);
+        yyerror("Incorrect col size for row concat\n");
+        exit(1);
     }
     r = $1->rows + $3->rows;
     c = $1->cols;
     temp = new_temp(r, c);
 
     asprintf(&temp->expr, matrixrowconcat_string,
-	     temp->name, r, c,
-	     expr,
-	     $1->rows,
-	     $1->cols,
-	     temp->name, $1->name,
-	     $1->rows, r,
-	     $1->cols,
-	     temp->name, $3->name, $1->rows);
+             temp->name, r, c,
+             expr,
+             $1->rows,
+             $1->cols,
+             temp->name, $1->name,
+             $1->rows, r,
+             $1->cols,
+             temp->name, $3->name, $1->rows);
     
     free_matrix_val($1);
     free_matrix_val($3);
@@ -263,8 +275,8 @@ INT {
     /* Look up the matrix in the symbol table to get dimensions */
     MatrixEntry *e = lookup_matrix($1);
     if (!e) {
-	yyerror("Undeclared matrix used in expression");
-	exit(1);
+        yyerror("Undeclared matrix used in expression");
+        exit(1);
     }
     $$ = make_matrix_val($1, e->rows, e->cols);
 }
