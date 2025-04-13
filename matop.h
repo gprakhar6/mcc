@@ -477,7 +477,6 @@ MatrixVal* matrix_add_expr(MatrixVal *e1, MatrixVal *e2)
 {
     MatrixVal *temp;
     char *expr;
-    printf("add\n");
     expr = astrcat(e1->expr, e2->expr);
     expr = indent_expr(expr);
     if((e1->rows != e2->rows) || (e1->cols != e2->cols)) {
@@ -627,7 +626,6 @@ MatrixVal* matrix_mul_expr(MatrixVal *e1, MatrixVal *e2)
 {
     MatrixVal *temp;
     char *expr;
-    printf("mul\n");
     expr = astrcat(e1->expr, e2->expr);
     expr = indent_expr(expr);
 
