@@ -28,11 +28,13 @@
 %type <ms> slice
  /* Operator precedences */
 %nonassoc '='
-%left '+' '-' '*' '/' '|' '_'
+%left '+' '-'
+%left '*' '/'
+%left '|' '_'
 %right '~' '%'
 %right '$'
 %nonassoc SLICE
-%nonassoc '['  // give [] its own precedence
+%nonassoc '[' ']'  // give [] its own precedence
 %%
 
 program:
@@ -139,18 +141,13 @@ term {
 	     temp->rows, temp->cols, temp->name, $2->name);
     free_matrix_val($2);
     $$ = temp;
-} | expr '|' term {
+} | expr '|' expr {
     MatrixVal *temp;
     char *expr;
     int r, c;
     // TBD is this really required?
-    if($1->expr == NULL) {
-	gen_expr(&expr, $3);
-    }
-    else {
-	$1->expr = indent_expr($1->expr);
-	expr = $1->expr;
-    }
+    expr = astrcat($1->expr, $3->expr);
+    expr = indent_expr(expr);
 
     if($1->rows != $3->rows) {
 	printf("Incorrect row sizes for column concat left:%d,right:%d\n",
@@ -176,7 +173,7 @@ term {
     free_matrix_val($3);
 
     $$ = temp;
-} | expr '_' term {
+} | expr '_' expr {
     MatrixVal *temp;
     char *expr;
     int r, c;
@@ -213,7 +210,7 @@ term {
     free_matrix_val($3);
 
     $$ = temp;
-} | expr '+' term {
+} | expr '+' expr {
     $$ = matrix_add_expr($1, $3);
     free_matrix_val($1);
     free_matrix_val($3);

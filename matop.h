@@ -11,7 +11,7 @@ typedef struct {
     int cols;
 } MatrixEntry;
     
-#define MAX_MATRICES 100
+#define MAX_MATRICES 512
 MatrixEntry symbol_table[MAX_MATRICES];
 int symbol_count = 0;
 
@@ -285,7 +285,25 @@ MatrixVal* new_temp(int rz, int cz) {
     char *tname = new_temp_name();
     return make_matrix_val(tname, rz, cz);
 }
-	
+
+char *astrcat(char *s1, char *s2)
+{
+    int n = 0;
+    char *ret;
+    if(s1 != NULL)
+	n += strlen(s1);
+    if(s2 != NULL)
+	n += strlen(s2);
+    n += 1;
+    ret = (char *)malloc(n);
+    ret[0] = '\0';
+    if(s1 != NULL)
+	strcat(ret, s1);
+    if(s2 != NULL)
+	strcat(ret, s2);
+    
+    return ret;
+}
 char* indent_expr(char *s)
 {
     int i, j, k;
@@ -370,18 +388,14 @@ MatrixVal* create_submatrix(MatrixVal *m,
     }
     MatrixVal *temp = new_temp(r,c);
 
-    if(m->expr == NULL)
-	expr = empty_string;
-    else {
-	m->expr = indent_expr(m->expr);
-	expr = m->expr;
-    }
+    gen_expr(&expr, m);
     asprintf(&temp->expr, matrixslice_string,
 	     temp->name, r, c,
 	     expr,
 	     start_row, end_row, start_col, end_col,
 	     temp->name, start_row, start_col, m->name);
-		    
+
+    free(expr);
     return temp;
 }	
 
@@ -404,6 +418,7 @@ void mat_assign_expr(MatrixEntry *dest, MatrixVal *e)
     printf(matrixcopy_string, dest->rows, dest->cols,
 	   dest->name, e->name);
     printf("}\n");
+    free(expr);
 }
 
 void matrix_slice_assign(char *id_name,
@@ -455,20 +470,16 @@ void matrix_slice_assign(char *id_name,
 	   start_row, end_row, start_col, end_col,
 	   id_name, e->name, start_row, start_col);
     printf("}\n");
+    free(expr);
 }
 
 MatrixVal* matrix_add_expr(MatrixVal *e1, MatrixVal *e2)
 {
     MatrixVal *temp;
     char *expr;
-    if(e1->expr == NULL) {
-	// TBD is this really required?
-	gen_expr(&expr, e2);
-    }
-    else {
-	e1->expr = indent_expr(e1->expr);
-	expr = e1->expr;
-    }
+    printf("add\n");
+    expr = astrcat(e1->expr, e2->expr);
+    expr = indent_expr(expr);
     if((e1->rows != e2->rows) || (e1->cols != e2->cols)) {
 	if((e1->rows == e1->cols) && (e1->rows != 1)) {
 	    if ((e1->rows == e2->cols) && (e2->rows == 1)) 
@@ -533,6 +544,7 @@ add_left_scalar_to_diagonal:
 	     temp->name, '+', e1->fval);
     goto add_op_fin;
 add_op_fin:
+    free(expr);
     return temp;
 }
 
@@ -540,13 +552,8 @@ MatrixVal* matrix_sub_expr(MatrixVal *e1, MatrixVal *e2)
 {
     MatrixVal *temp = new_temp(e1->rows, e1->cols);
     char *expr;
-    if(e1->expr == NULL) {
-	gen_expr(&expr, e2);
-    }
-    else {
-	e1->expr = indent_expr(e1->expr);
-	expr = e1->expr;
-    }
+    expr = astrcat(e1->expr, e2->expr);
+    expr = indent_expr(expr);
     if((e1->rows != e2->rows) || (e1->cols != e2->cols)) {
 	if((e1->rows == e1->cols) && (e1->rows != 1)) {
 	    if ((e1->rows == e2->cols) && (e2->rows == 1)) 
@@ -612,20 +619,17 @@ sub_left_scalar_to_diagonal:
 	     temp->rows, temp->cols, temp->name, e2->name,
 	     temp->name, '-', e1->fval);
     goto sub_op_fin;
-sub_op_fin:    
+sub_op_fin:
+    free(expr);
     return temp;
 }
 MatrixVal* matrix_mul_expr(MatrixVal *e1, MatrixVal *e2)
 {
     MatrixVal *temp;
     char *expr;
-    if(e1->expr == NULL) {
-	gen_expr(&expr, e2);
-    }
-    else {
-	e1->expr = indent_expr(e1->expr);
-	expr = e1->expr;
-    }
+    printf("mul\n");
+    expr = astrcat(e1->expr, e2->expr);
+    expr = indent_expr(expr);
 
     if(e1->isscalar == 1) {
 	goto left_scalar_mul;
@@ -652,7 +656,7 @@ left_1_elem_mul:
 	     expr,
 	     temp->rows,
 	     temp->cols,
-	     temp->name, e1->name, e2->name);
+	     temp->name, e2->name, e1->name);
     goto fin_mul;
 right_1_elem_mul:
     temp = new_temp(e1->rows, e1->cols);
@@ -661,7 +665,7 @@ right_1_elem_mul:
 	     expr,
 	     temp->rows,
 	     temp->cols,
-	     temp->name, e2->name, e1->name);
+	     temp->name, e1->name, e2->name);
     goto fin_mul;
 right_scalar_mul:
     temp = new_temp(e1->rows, e1->cols);
@@ -690,6 +694,7 @@ full_mul:
 	     e1->name, e2->name, temp->name);
     goto fin_mul;
 fin_mul:
+    free(expr);
     return temp;
 }
 
@@ -697,13 +702,10 @@ MatrixVal* matrix_div_expr(MatrixVal *e1, MatrixVal *e2)
 {
     MatrixVal *temp;
     char *expr;
-    if(e1->expr == NULL) {
-	gen_expr(&expr, e2);
-    }
-    else {
-	e1->expr = indent_expr(e1->expr);
-	expr = e1->expr;
-    }
+    
+    expr = astrcat(e1->expr, e2->expr);
+    expr = indent_expr(expr);
+    
     if(e1->isscalar == 1) {
 	goto left_scalar_div;
     } else if (e2->isscalar == 1) {
@@ -767,5 +769,6 @@ full_div:
 	     temp->name, e1->name, e2->name);
     goto fin_div;
 fin_div:
+    free(expr);
     return temp;
 }
