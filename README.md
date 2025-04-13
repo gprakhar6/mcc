@@ -32,3 +32,5 @@ double A[3][3], B[3][3], C[3][3];
 5. Diagonal % operator also exists, x = %F, will extract F diagonal element as vector element
 6. vector element are always double vec[1][n].
 7. you can do %F = x, as well to assignal diagonal elements
+8. You can now do mul/div with matrices of single dimension
+9. div of two matrices of equal sizes
