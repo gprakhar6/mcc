@@ -214,15 +214,15 @@ term {
     $$ = matrix_add_expr($1, $3);
     free_matrix_val($1);
     free_matrix_val($3);
-} | expr '-' term {
+} | expr '-' expr {
     $$ = matrix_sub_expr($1, $3);
     free_matrix_val($1);
     free_matrix_val($3);
-} | expr '*' term {
+} | expr '*' expr {
     $$ = matrix_mul_expr($1, $3);
     free_matrix_val($1);
     free_matrix_val($3);
-} | expr '/' term {
+} | expr '/' expr {
     $$ = matrix_div_expr($1, $3);
     free_matrix_val($1);
     free_matrix_val($3);
