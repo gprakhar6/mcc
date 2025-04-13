@@ -73,7 +73,8 @@ int inMatrix = 0;
     "]"        { return ']'; }
     "("        { return '('; }
     ")"        { return ')'; }
-    "|"        { return '|'; }
+    "|"        { return '|'; } // matrix column concat
+    "_"        { return '_'; } // matrix row concat
     [ \t\r\n]+  { /* skip whitespace in DSL region */ }
     .         { /* ignore unexpected characters */ }
 }
