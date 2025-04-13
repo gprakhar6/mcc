@@ -2,6 +2,7 @@
 !matrix.y
 !matrix.lex
 !matrix_defs.h
+!matop.h
 !test.c
 !makefile
 !.gitignore
