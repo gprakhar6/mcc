@@ -4,7 +4,10 @@
 #include <stdlib.h>
 #include <assert.h>    
 #include "matop.h"
-    
+int totadd = 0;
+int totsub = 0;
+int totmul = 0;
+int totdiv = 0;    
 %}
 
 /* Now define the %union that uses MatrixVal. Since matrix_defs.h was included above,

@@ -70,6 +70,10 @@ int inMatrix = 0;
               inMatrix = 0;
               BEGIN(INITIAL);
               printf("/* End Generated Matrix Code */\n\n");
+	      printf("/* totadd = %d */\n", totadd);
+	      printf("/* totsub = %d */\n", totsub);
+	      printf("/* totmul = %d */\n", totmul);
+	      printf("/* totdiv = %d */\n", totdiv);
             }
     "matrix"  { return MATRIX_KW; }
     [0-9]+    { yylval.ival = atoi(yytext); return INT; }

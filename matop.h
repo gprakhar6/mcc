@@ -509,6 +509,7 @@ MatrixVal* matrix_add_expr(MatrixVal *e1, MatrixVal *e2)
         yyerror("Incorrect row & cols size for multiplication\n");
         exit(1);
     }
+    totadd += e1->rows*e1->cols;
     temp = new_temp(e1->rows, e1->cols);
     asprintf(&temp->expr, matop_string,
              temp->name, temp->rows, temp->cols,
@@ -516,6 +517,7 @@ MatrixVal* matrix_add_expr(MatrixVal *e1, MatrixVal *e2)
              temp->rows, temp->cols, temp->name, e1->name, '+', e2->name);
     goto add_op_fin;
 add_right_row_vector_to_diagonal:
+    totadd += e1->rows;
     temp = new_temp(e1->rows, e1->cols);
     asprintf(&temp->expr, matdiagvectorop_string,
              temp->name, temp->rows, temp->cols,
@@ -525,6 +527,7 @@ add_right_row_vector_to_diagonal:
              temp->name, e1->name, '+', e2->name);
     goto add_op_fin;
 add_right_scalar_to_diagonal:
+    totadd += e1->rows;
     temp = new_temp(e1->rows, e1->cols);
     asprintf(&temp->expr, matdiagscalarop_string,
              temp->name, temp->rows, temp->cols,
@@ -533,6 +536,7 @@ add_right_scalar_to_diagonal:
              temp->name, '+', e2->fval);
     goto add_op_fin;
 add_left_row_vector_to_diagonal:
+    totadd += e2->rows;
     temp = new_temp(e2->rows, e2->cols);
     asprintf(&temp->expr, matdiagvectorop_string,
              temp->name, temp->rows, temp->cols,
@@ -542,6 +546,7 @@ add_left_row_vector_to_diagonal:
              temp->name, e2->name, '+', e1->name);
     goto add_op_fin;
 add_left_scalar_to_diagonal:
+    totadd += e2->rows;
     temp = new_temp(e2->rows, e2->cols);
     asprintf(&temp->expr, matdiagscalarop_string,
              temp->name, temp->rows, temp->cols,
@@ -586,6 +591,7 @@ MatrixVal* matrix_sub_expr(MatrixVal *e1, MatrixVal *e2)
             exit(1);
         }
     }
+    totsub += e1->rows*e1->cols;
     temp = new_temp(e1->rows, e1->cols);
     asprintf(&temp->expr, matop_string,
              temp->name, temp->rows, temp->cols,
@@ -593,6 +599,7 @@ MatrixVal* matrix_sub_expr(MatrixVal *e1, MatrixVal *e2)
              temp->rows, temp->cols, temp->name, e1->name, '-', e2->name);
     goto sub_op_fin;
 sub_right_row_vector_to_diagonal:
+    totsub += e1->rows;
     temp = new_temp(e1->rows, e1->cols);
     temp = new_temp(e2->rows, e2->cols);
     asprintf(&temp->expr, matdiagvectorop_string,
@@ -602,6 +609,7 @@ sub_right_row_vector_to_diagonal:
              temp->name, e1->name, '-', e2->name);
     goto sub_op_fin;
 sub_right_scalar_to_diagonal:
+    totsub += e1->rows;
     temp = new_temp(e1->rows, e1->cols);
     asprintf(&temp->expr, matdiagscalarop_string,
              temp->name, temp->rows, temp->cols,
@@ -610,6 +618,7 @@ sub_right_scalar_to_diagonal:
              temp->name, '-', e2->fval);
     goto sub_op_fin;
 sub_left_row_vector_to_diagonal:
+    totsub += e2->rows;
     temp = new_temp(e2->rows, e2->cols);
     asprintf(&temp->expr, matdiagleftminusvector_string,
              temp->name, temp->rows, temp->cols,
@@ -619,6 +628,7 @@ sub_left_row_vector_to_diagonal:
              temp->name,  e1->name);
     goto sub_op_fin;
 sub_left_scalar_to_diagonal:
+    totsub += e2->rows;
     temp = new_temp(e2->rows, e2->cols);
     asprintf(&temp->expr, matdiagminusleftscalar_string,
              temp->name, temp->rows, temp->cols,
@@ -657,6 +667,7 @@ MatrixVal* matrix_mul_expr(MatrixVal *e1, MatrixVal *e2)
     }
 
 left_1_elem_mul:
+    totmul += e2->rows * e2->cols;
     temp = new_temp(e2->rows, e2->cols);
     asprintf(&temp->expr, matrix_1_elem_mul_string,
              temp->name, temp->rows, temp->cols,
@@ -666,6 +677,7 @@ left_1_elem_mul:
              temp->name, e2->name, e1->name);
     goto fin_mul;
 right_1_elem_mul:
+    totmul += e1->rows * e1->cols;
     temp = new_temp(e1->rows, e1->cols);
     asprintf(&temp->expr, matrix_1_elem_mul_string,
              temp->name, temp->rows, temp->cols,
@@ -675,6 +687,7 @@ right_1_elem_mul:
              temp->name, e1->name, e2->name);
     goto fin_mul;
 right_scalar_mul:
+    totmul += e1->rows * e1->cols;
     temp = new_temp(e1->rows, e1->cols);
     asprintf(&temp->expr, matrixscalarop_string,
              temp->name, temp->rows, temp->cols,
@@ -684,6 +697,7 @@ right_scalar_mul:
              temp->name, e1->name, e2->fval);
     goto fin_mul;    
 left_scalar_mul:
+    totmul += e2->rows * e2->cols;
     temp = new_temp(e2->rows, e2->cols);
     asprintf(&temp->expr, matrixscalarop_string,
              temp->name, temp->rows, temp->cols,
@@ -693,6 +707,7 @@ left_scalar_mul:
              temp->name, e2->name, '*', e1->fval);
     goto fin_mul;
 full_mul:
+    totmul += e1->rows * e1->cols * e2->cols;
     temp = new_temp(e1->rows, e2->cols);
     asprintf(&temp->expr, matmul_string,
              temp->name, temp->rows, temp->cols,
@@ -732,6 +747,7 @@ MatrixVal* matrix_div_expr(MatrixVal *e1, MatrixVal *e2)
     }
 
 left_1_elem_div:
+    totdiv += e2->rows * e2->cols;
     temp = new_temp(e2->rows, e2->cols);
     asprintf(&temp->expr, matrix_left_1_elem_div_string,
              temp->name, temp->rows, temp->cols,
@@ -741,6 +757,7 @@ left_1_elem_div:
              temp->name, e1->name, e2->name);
     goto fin_div;
 right_1_elem_div:
+    totdiv += e1->rows * e1->cols;
     temp = new_temp(e1->rows, e1->cols);
     asprintf(&temp->expr, matrix_right_1_elem_div_string,
              temp->name, temp->rows, temp->cols,
@@ -750,6 +767,7 @@ right_1_elem_div:
              temp->name, e1->name, e2->name);
     goto fin_div;
 right_scalar_div:
+    totdiv += e1->rows * e1->cols;
     temp = new_temp(e1->rows, e1->cols);
     asprintf(&temp->expr, matrixscalarop_string,
              temp->name, temp->rows, temp->cols,
@@ -759,6 +777,7 @@ right_scalar_div:
              temp->name, e1->name, '/', e2->fval);
     goto fin_div;    
 left_scalar_div:
+    totdiv += e2->rows * e2->cols;
     temp = new_temp(e2->rows, e2->cols);
     asprintf(&temp->expr, matrixleftscalarop_string,
              temp->name, temp->rows, temp->cols,
@@ -768,6 +787,7 @@ left_scalar_div:
              temp->name, e1->fval, '/', e2->name);
     goto fin_div;
 full_div:
+    totdiv += e1->rows * e1->cols;
     temp = new_temp(e1->rows, e1->cols);
     asprintf(&temp->expr, matdiv_string,
              temp->name, temp->rows, temp->cols,

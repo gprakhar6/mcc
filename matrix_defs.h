@@ -21,4 +21,9 @@ typedef struct {
     int cr; // complete range or not
 } MatrixSlice;
 
+extern int totadd;
+extern int totsub;
+extern int totmul;
+extern int totdiv;
+
 #endif /* MATRIX_DEFS_H */
