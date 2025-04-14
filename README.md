@@ -34,3 +34,4 @@ double A[3][3], B[3][3], C[3][3];
 7. you can do %F = x, as well to assignal diagonal elements
 8. You can now do mul/div with matrices of single dimension
 9. you can do div of two matrices of equal sizes
+10. Now you can do $x > fp to print into an open file. fp must be open beforehand. 

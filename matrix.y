@@ -35,7 +35,7 @@ int totdiv = 0;
 %left '*' '/'
 %left '|' '_'
 %right '~' '%'
-%right '$'
+%right '$' '>'
 %nonassoc SLICE
 %nonassoc '[' ']'  // give [] its own precedence
 %nonassoc UMINUS
@@ -78,8 +78,24 @@ ID '[' slice ']' '[' slice ']' '=' expr ';' {
         printstr = matprint_string;
     printf(printstr, $2->name,
            $2->rows, $2->cols,
-           $2->name, $2->rows, $2->cols);
+           $2->name);
     free_matrix_val($2);
+} | '$' expr '>' ID ';' %prec '>' {
+    char *expr;
+    const char *printstr;
+    gen_expr(&expr, $2);
+    printf("%s", expr);
+    if($2->rows == 1)
+        printstr = vecfileprint_string;
+    else
+        printstr = matfileprint_string;
+    printf(printstr,
+	   $2->rows,
+	   $2->cols,
+	   $4, $2->name,
+	   $4);
+    free_matrix_val($2);
+    free($4);
 } | '%' ID '=' expr ';' {
     char *expr;
     MatrixVal *temp;

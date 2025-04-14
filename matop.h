@@ -75,6 +75,7 @@ MatrixSlice* create_slice(int sr, int er)
 /* Temporary counter for unique names */
 static int temp_count = 0;
 static char empty_string[] = "";
+
 static char vecprint_string[] =
     "printf(\"%%s: \",\"%s\");"
     "for(int _i=0;_i<%d;_i++)" "{"
@@ -89,6 +90,20 @@ static char matprint_string[] =
             "printf(\"%%20.15lf \", %s[_i][_j]);"
         "printf(\"\\n\");"
     "}\n";
+
+static char vecfileprint_string[] =
+    "for(int _i=0;_i<%d;_i++)" "{"
+        "for(int _j=0;_j<%d;_j++)"
+            "fprintf(%s,\"%%20.15lf \", %s[_i][_j]);"
+        "fprintf(%s,\"\\n\");"
+    "}\n";
+static char matfileprint_string[] =
+    "for(int _i=0;_i<%d;_i++)" "{"
+        "for(int _j=0;_j<%d;_j++)"
+            "fprintf(%s,\"%%20.15lf \", %s[_i][_j]);"
+        "fprintf(%s,\"\\n\");"
+    "}\n";
+
 static char matdiagvectorop_string[] = "double %s[%d][%d];\n"
     "{\n"
         "%s"

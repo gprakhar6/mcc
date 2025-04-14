@@ -25,6 +25,7 @@ int main() {
 	    x = (1.0+f)*x;
 	    norm = ((~x) * x);
 	    x =  x / norm;
+	    $x > fp;
 	    //xx = x / x;
 	}
     }
