@@ -461,8 +461,9 @@ void matrix_slice_assign(char *id_name,
         start_col = slice_c->sr;
         end_col = slice_c->er;
     }
-    if(start_row >= e->rows || end_row >= e->rows
-        || start_col >= e->cols || end_col >= e->cols) {
+    if(
+	((end_row - start_row + 1) > e->rows)
+       || ((end_col - start_col + 1) > e->cols) ) {
         printf("Bad submat equality %s[%d:%d][%d:%d] = [%d][%d]\n",
                id_name, start_row, end_row, start_col, end_col,
                e->rows, e->cols);
