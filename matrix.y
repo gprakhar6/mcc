@@ -139,6 +139,22 @@ term {
     free_matrix_val($1);
     free($3);
     free($6);
+} | ID '(' expr ')' {
+    char *expr;
+    gen_expr(&expr, $3);
+    
+    MatrixVal *temp = new_temp($3->rows, $3->cols);
+
+    asprintf(&temp->expr, matfunc_string,
+             temp->name, temp->rows, temp->cols,
+             expr,
+             temp->rows,
+	     temp->cols,
+             temp->name, $1, $3->name);
+    
+    free_matrix_val($3);
+    free($1);
+    $$ = temp;
 } | '%' expr %prec '%' {
     char *expr;
     if($2->rows != $2->cols) {

@@ -39,6 +39,10 @@ double A[3][3], B[3][3], C[3][3];
 12. ! operator does inverse. !mat does inverse of mat. However matinv(n, double inv[n][n], double a[n][n]) must
     be defined by the user outside.
 
+13. You can also do func(x), where func accepts a scalar input and outputs scalar output.
+    you can do y = func(x) * z. Essentially func(x) applies func to each element and returns
+    matrix of same size
+    
 # INSTALL
 
 1. flex + bison is a prerequisite
