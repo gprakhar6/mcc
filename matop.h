@@ -224,8 +224,8 @@ static char matrix_1_elem_mul_string[] =
         "%s"
     "    "
     "for(int _i=0;_i<%d;_i++)"
-        "for(int _j=0;_j<%d;_j++)" "{"
-            "%s[_i][_j] = %s[_i][_j] * %s[0][0];}\n"
+        "for(int _j=0;_j<%d;_j++)"
+            "{%s[_i][_j] = %s[_i][_j] * %s[0][0];}\n"
     "}\n";
 static char matrix_left_1_elem_div_string[] =
     "double %s[%d][%d];\n"
@@ -233,8 +233,8 @@ static char matrix_left_1_elem_div_string[] =
         "%s"
     "    "
     "for(int _i=0;_i<%d;_i++)"
-        "for(int _j=0;_j<%d;_j++)" "{"
-            "%s[_i][_j] = %s[0][0] / %s[_i][_j];}\n"
+        "for(int _j=0;_j<%d;_j++)"
+            "{%s[_i][_j] = %s[0][0] / %s[_i][_j];}\n"
     "}\n";
 static char matrix_right_1_elem_div_string[] =
     "double %s[%d][%d];\n"
@@ -242,8 +242,8 @@ static char matrix_right_1_elem_div_string[] =
         "%s"
     "    "
     "for(int _i=0;_i<%d;_i++)"
-        "for(int _j=0;_j<%d;_j++)" "{"
-            "%s[_i][_j] = %s[_i][_j] / %s[0][0];}\n"
+        "for(int _j=0;_j<%d;_j++)"
+            "{%s[_i][_j] = %s[_i][_j] / %s[0][0];}\n"
     "}\n";
 static char matrixleftscalarop_string[] =
     "double %s[%d][%d];\n"
