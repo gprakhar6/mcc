@@ -34,7 +34,7 @@ int totdiv = 0;
 %left '+' '-'
 %left '*' '/'
 %left '|' '_'
-%right '~' '%'
+%right '!' '~' '%'
 %right '$' '>'
 %nonassoc SLICE
 %nonassoc '[' ']'  // give [] its own precedence
@@ -169,6 +169,22 @@ term {
              temp->name, temp->rows, temp->cols,
              expr,
              temp->rows, temp->cols, temp->name, $2->name);
+    free_matrix_val($2);
+    $$ = temp;
+} | '!' expr %prec '!' {
+    MatrixVal *temp = new_temp($2->rows, $2->cols);
+    char *expr;
+    gen_expr(&expr, $2);
+    if($2->rows != $2->cols) {
+	printf("Not a square matrix for inverse %s[%d][%d]\n",
+	       $2->name, $2->rows, $2->cols);
+	yyerror("Not a square matrix for inverse\n");
+	exit(1);
+    }
+    asprintf(&temp->expr, matinv_string,
+             temp->name, temp->rows, temp->cols,
+             expr,
+             temp->rows, temp->name, $2->name);
     free_matrix_val($2);
     $$ = temp;
 } | expr '|' expr {

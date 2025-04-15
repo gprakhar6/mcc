@@ -187,6 +187,13 @@ static char matdiv_string[] =
             "for(int _j=0;_j<%d;_j++)"
                 "{%s[_i][_j] = %s[_i][_j]/%s[_i][_j];}"
     "}\n";
+static char matinv_string[] =
+    "double %s[%d][%d];\n"
+    "{\n"
+        "%s"
+    "    "
+        "matinv(%d, %s, %s);"
+    "}\n";
 static char mattranspose_string[] =
     "double %s[%d][%d];\n"
     "{\n"

@@ -86,6 +86,7 @@ int inMatrix = 0;
     "+"        { return '+'; }
     "-"        { return '-'; }
     "~"        { return '~'; } // transpose operator
+    "!"        { return '!'; } // inverse operator
     "%"        { return '%'; } // diagonal operator
     "$"        { return '$'; } // print operator
     "*"        { return '*'; }
