@@ -11,7 +11,7 @@ typedef struct {
     int cols;
 } MatrixEntry;
     
-#define MAX_MATRICES 512
+#define MAX_MATRICES 2048
 MatrixEntry symbol_table[MAX_MATRICES];
 int symbol_count = 0;
 
