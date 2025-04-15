@@ -36,6 +36,8 @@ double A[3][3], B[3][3], C[3][3];
 9. you can do div of two matrices of equal sizes
 10. Now you can do $x > fp to print into an open file. fp must be open beforehand.
 11. Added $x < fp to read from an open file. fp must be open beforehand
+12. ! operator does inverse. !mat does inverse of mat. However matinv(n, double inv[n][n], double a[n][n]) must
+    be defined by the user outside.
 
 # INSTALL
 
@@ -58,4 +60,84 @@ as mcc
 ```
 $ mcc main.c > out.c
 $ gcc out.c -o main
+```
+
+# EXAMPLE matinv.h
+
+```c
+#include <stdio.h>
+#include <math.h>
+
+#define EPSILON 1e-12
+
+// Function to invert an n x n matrix using Gaussian elimination with partial pivoting
+// a: input matrix
+// inv: output matrix where inverse is stored
+// n: dimension of the matrix
+// Returns 0 on success, -1 if matrix is singular or near-singular
+int matinv(int n, double inv[n][n], double a[n][n]) {
+    int i, j, k, max_row;
+    double temp;
+
+    double aug[n][2 * n];
+
+    // Initialize augmented matrix [inv_a | I]
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++) {
+            aug[i][j] = a[i][j];
+            aug[i][j + n] = (i == j) ? 1.0 : 0.0;
+        }
+    }
+
+    // Gaussian elimination with partial pivoting
+    for (i = 0; i < n; i++) {
+        // Find the pivot row
+        max_row = i;
+        for (k = i + 1; k < n; k++) {
+            if (fabs(aug[k][i]) > fabs(aug[max_row][i])) {
+                max_row = k;
+            }
+        }
+
+        // Check for singular matrix
+        if (fabs(aug[max_row][i]) < EPSILON) {
+            return -1;
+        }
+
+        // Swap rows if needed
+        if (max_row != i) {
+            for (j = 0; j < 2 * n; j++) {
+                temp = aug[i][j];
+                aug[i][j] = aug[max_row][j];
+                aug[max_row][j] = temp;
+            }
+        }
+
+        // Normalize the pivot row
+        temp = aug[i][i];
+        for (j = 0; j < 2 * n; j++) {
+            aug[i][j] /= temp;
+        }
+
+        // Eliminate the other rows
+        for (k = 0; k < n; k++) {
+            if (k != i) {
+                temp = aug[k][i];
+                for (j = 0; j < 2 * n; j++) {
+                    aug[k][j] -= temp * aug[i][j];
+                }
+            }
+        }
+    }
+
+    // Extract the inverse matrix
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++) {
+            inv[i][j] = aug[i][j + n];
+        }
+    }
+
+    return 0;
+}
+
 ```
