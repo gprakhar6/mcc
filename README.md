@@ -36,3 +36,26 @@ double A[3][3], B[3][3], C[3][3];
 9. you can do div of two matrices of equal sizes
 10. Now you can do $x > fp to print into an open file. fp must be open beforehand.
 11. Added $x < fp to read from an open file. fp must be open beforehand
+
+# INSTALL
+
+1. flex + bison is a prerequisite
+
+```sh
+$ make
+$ make install
+```
+
+2. make install will put into /usr/local/bin, requires sudo
+permission. else you can put matrix_parser into custom bin folder
+as mcc
+
+
+# USAGE
+
+1. make sure mcc is in your path
+
+```
+$ mcc main.c > out.c
+$ gcc out.c -o main
+```
