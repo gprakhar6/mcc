@@ -107,7 +107,7 @@ static char matfileprint_string[] =
 static char matfileread_string[] =
     "for(int _i=0;_i<%d;_i++)" "{"
         "for(int _j=0;_j<%d;_j++)"
-            "fscanf(%s,\"%%20.15lf \", &%s[_i][_j]);"
+            "fscanf(%s,\"%%lf\", &%s[_i][_j]);"
     "}\n";
 
 static char matdiagvectorop_string[] = "double %s[%d][%d];\n"
