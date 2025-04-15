@@ -21,6 +21,8 @@ typedef struct {
     int cr; // complete range or not
 } MatrixSlice;
 
+extern int symbol_count;
+
 extern int totadd;
 extern int totsub;
 extern int totmul;

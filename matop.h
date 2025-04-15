@@ -191,7 +191,7 @@ static char matdiv_string[] =
     "    "
         "for(int _i=0;_i<%d;_i++)" 
             "for(int _j=0;_j<%d;_j++)"
-                "{%s[_i][_j] = %s[_i][_j]/%s[_i][_j];}"
+                "{%s[_i][_j] = %s[_i][_j]/%s[_i][_j];}\n"
     "}\n";
 static char matfunc_string[] =
     "double %s[%d][%d];\n"
@@ -200,7 +200,7 @@ static char matfunc_string[] =
     "    "
         "for(int _i=0;_i<%d;_i++)" 
             "for(int _j=0;_j<%d;_j++)"
-                "{%s[_i][_j] = %s(%s[_i][_j]);}"
+                "{%s[_i][_j] = %s(%s[_i][_j]);}\n"
     "}\n";
 static char matinv_string[] =
     "double %s[%d][%d];\n"
@@ -251,8 +251,8 @@ static char matrixleftscalarop_string[] =
         "%s"
     "    "
     "for(int _i=0;_i<%d;_i++)"
-        "for(int _j=0;_j<%d;_j++)" "{"
-            "%s[_i][_j] = %20.15lf %c %s[_i][_j];}\n"
+        "for(int _j=0;_j<%d;_j++)"
+            "{%s[_i][_j] = %20.15lf %c %s[_i][_j];}\n"
     "}\n";
 static char matrixscalarop_string[] =
     "double %s[%d][%d];\n"
@@ -260,8 +260,8 @@ static char matrixscalarop_string[] =
         "%s"
     "    "
     "for(int _i=0;_i<%d;_i++)"
-        "for(int _j=0;_j<%d;_j++)" "{"
-            "%s[_i][_j] = %s[_i][_j] %c %20.15lf;}\n"
+        "for(int _j=0;_j<%d;_j++)"
+            "{%s[_i][_j] = %s[_i][_j] %c %20.15lf;}\n"
     "}\n";
 static char matrixcopy_string[] =
     "    for(int _i=0;_i<%d;_i++)" 
@@ -291,7 +291,7 @@ static char matrixcolconcat_string[] =
     "    "
     "for(int _i=0;_i<%d;_i++)"
         "for(int _j=%d;_j<%d;_j++)"
-            "%s[_i][_j] = %s[_i][_j-%d];"
+            "%s[_i][_j] = %s[_i][_j-%d];\n"
     "}\n";
 
 static char matrixrowconcat_string[] =
@@ -305,7 +305,7 @@ static char matrixrowconcat_string[] =
     "    "
     "for(int _i=%d;_i<%d;_i++)"
         "for(int _j=0;_j<%d;_j++)"
-            "%s[_i][_j] = %s[_i-%d][_j];"
+            "%s[_i][_j] = %s[_i-%d][_j];\n"
     "}\n";
 
 static char matrixdiag_string[] =
@@ -314,7 +314,7 @@ static char matrixdiag_string[] =
     "    "
         "%s"
         "for(int _i=0;_i<%d;_i++)"
-            "{%s[0][_i] = %s[_i][_i];}"
+            "{%s[0][_i] = %s[_i][_i];}\n"
     "}\n";
 static char matrixdiagassign_string[] =
     "for(int _i=0;_i<%d;_i++)"

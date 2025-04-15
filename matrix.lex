@@ -67,6 +67,7 @@ int inMatrix = 0;
     }
     
     "}"    {
+	      symbol_count = 0;
               inMatrix = 0;
               BEGIN(INITIAL);
               printf("/* End Generated Matrix Code */\n\n");
