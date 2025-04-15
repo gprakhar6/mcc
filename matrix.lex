@@ -79,7 +79,8 @@ int inMatrix = 0;
     [0-9]+    { yylval.ival = atoi(yytext); return INT; }
     [A-Za-z][A-Za-z0-9_\.]*  { yylval.str = strdup(yytext); return ID; }
     (([0-9]+)?\.[0-9]+)|([0-9]+\.([0-9]+*)?) { yylval.fval = atof(yytext); return FLOAT; }
-    ">"        { return '>'; }
+    ">"        { return '>'; } // output to file pointer
+    "<"        { return '<'; } // input from file pointer
     "="        { return '='; }
     ";"        { return ';'; }
     ":"        { return ':'; } // range operator

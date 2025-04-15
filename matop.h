@@ -104,6 +104,12 @@ static char matfileprint_string[] =
         "fprintf(%s,\"\\n\");"
     "}\n";
 
+static char matfileread_string[] =
+    "for(int _i=0;_i<%d;_i++)" "{"
+        "for(int _j=0;_j<%d;_j++)"
+            "fscanf(%s,\"%%20.15lf \", &%s[_i][_j]);"
+    "}\n";
+
 static char matdiagvectorop_string[] = "double %s[%d][%d];\n"
     "{\n"
         "%s"
@@ -192,7 +198,7 @@ static char matinv_string[] =
     "{\n"
         "%s"
     "    "
-        "matinv(%d, %s, %s);"
+        "matinv(%d, %s, %s);\n"
     "}\n";
 static char mattranspose_string[] =
     "double %s[%d][%d];\n"
