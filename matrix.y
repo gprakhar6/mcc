@@ -35,7 +35,7 @@ int totdiv = 0;
 %left '*' '/'
 %left '|' '_'
 %right '!' '~' '%'
-%right '$' '>' '<'
+%right '@' '$' '>' '<'
 %nonassoc SLICE
 %nonassoc '[' ']'  // give [] its own precedence
 %nonassoc UMINUS
@@ -139,6 +139,20 @@ term {
     free_matrix_val($1);
     free($3);
     free($6);
+} | '@' ID '(' expr ')' %prec '@' {
+    char *expr;
+    gen_expr(&expr, $4);
+    
+    MatrixVal *temp = new_temp($4->rows, $4->cols);
+
+    asprintf(&temp->expr, matvecfunc_string,
+             temp->name, temp->rows, temp->cols,
+             expr,
+             $2, temp->name, $4->name);
+    
+    free_matrix_val($4);
+    free($2);
+    $$ = temp;
 } | ID '(' expr ')' {
     char *expr;
     gen_expr(&expr, $3);

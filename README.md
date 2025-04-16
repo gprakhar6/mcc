@@ -42,6 +42,8 @@ double A[3][3], B[3][3], C[3][3];
 13. You can also do func(x), where func accepts a scalar input and outputs scalar output.
     you can do y = func(x) * z. Essentially func(x) applies func to each element and returns
     matrix of same size
+14. If you do @func(x), then func input parameters should be (double out[r][c], double in[r][c]). It
+    essentially helps in giving vector input and getting a transformed vector output
     
 # INSTALL
 

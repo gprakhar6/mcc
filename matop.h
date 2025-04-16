@@ -193,6 +193,13 @@ static char matdiv_string[] =
             "for(int _j=0;_j<%d;_j++)"
                 "{%s[_i][_j] = %s[_i][_j]/%s[_i][_j];}\n"
     "}\n";
+static char matvecfunc_string[] =
+    "double %s[%d][%d];\n"
+    "{\n"
+        "%s"
+    "    "
+        "%s(%s, %s);\n"
+    "}\n";
 static char matfunc_string[] =
     "double %s[%d][%d];\n"
     "{\n"

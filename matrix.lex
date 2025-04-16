@@ -91,6 +91,7 @@ int inMatrix = 0;
     "!"        { return '!'; } // inverse operator
     "%"        { return '%'; } // diagonal operator
     "$"        { return '$'; } // print operator
+    "@"        { return '@'; } // vector function operator
     "*"        { return '*'; }
     "/"        { return '/'; }
     "["        { return '['; }
