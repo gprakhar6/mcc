@@ -16,17 +16,27 @@ int inMatrix = 0;
 
 "/*" {
     /* Ignore everything until the end of the comment */
-    int c;
-    while ((c = input()) != EOF) {
-	if (c == '*' && input() == '/')
-	    break;
-    }
+	/* Ignore everything until the end of the comment */
+	int c;
+	printf("/*");
+	while ((c = input()) != EOF) {
+	    putchar(c);
+	    if (c == '*' && input() == '/') {
+		putchar('/'); putchar('\n');
+		break;
+	    }
+	}
  }
     
 "//" {
     /* Ignore everything until the end of the line */
-    int c;
-    while ((c = input()) != EOF && c != '\n');
+	int c;
+	printf("//");
+	while ((c = input()) != EOF && c != '\n') {
+	    putchar(c);
+	    /* Do nothing */
+	}
+	putchar('\n');
 }
 
 "@matrix"[ \t\n]*"{" {
