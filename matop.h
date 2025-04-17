@@ -77,14 +77,14 @@ static int temp_count = 0;
 static char empty_string[] = "";
 
 static char vecprint_string[] =
-    "printf(\"%%s: \",\"%s\");"
+    "    printf(\"%%s: \",\"%s\");"
     "for(int _i=0;_i<%d;_i++)" "{"
         "for(int _j=0;_j<%d;_j++)"
             "printf(\"%%20.15lf \", %s[_i][_j]);"
         "printf(\"\\n\");"
     "}\n";
 static char matprint_string[] =
-    "printf(\"%%s:\\n\",\"%s\");"
+    "    printf(\"%%s:\\n\",\"%s\");"
     "for(int _i=0;_i<%d;_i++)" "{"
         "for(int _j=0;_j<%d;_j++)"
             "printf(\"%%20.15lf \", %s[_i][_j]);"
@@ -92,20 +92,20 @@ static char matprint_string[] =
     "}\n";
 
 static char vecfileprint_string[] =
-    "for(int _i=0;_i<%d;_i++)" "{"
+    "    for(int _i=0;_i<%d;_i++)" "{"
         "for(int _j=0;_j<%d;_j++)"
             "fprintf(%s,\"%%20.15lf \", %s[_i][_j]);"
         "fprintf(%s,\"\\n\");"
     "}\n";
 static char matfileprint_string[] =
-    "for(int _i=0;_i<%d;_i++)" "{"
+    "    for(int _i=0;_i<%d;_i++)" "{"
         "for(int _j=0;_j<%d;_j++)"
             "fprintf(%s,\"%%20.15lf \", %s[_i][_j]);"
         "fprintf(%s,\"\\n\");"
     "}\n";
 
 static char matfileread_string[] =
-    "for(int _i=0;_i<%d;_i++)" "{"
+    "    for(int _i=0;_i<%d;_i++)" "{"
         "for(int _j=0;_j<%d;_j++)"
             "fscanf(%s,\"%%lf\", &%s[_i][_j]);"
     "}\n";
@@ -324,7 +324,7 @@ static char matrixdiag_string[] =
             "{%s[0][_i] = %s[_i][_i];}\n"
     "}\n";
 static char matrixdiagassign_string[] =
-    "for(int _i=0;_i<%d;_i++)"
+    "    for(int _i=0;_i<%d;_i++)"
         "{%s[_i][_i] = %s[0][_i];}\n";
     
 char *new_temp_name(void) {

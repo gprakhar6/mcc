@@ -71,7 +71,7 @@ ID '[' slice ']' '[' slice ']' '=' expr ';' {
     char *expr;
     const char *printstr;
     gen_expr(&expr, $2);
-    printf("%s", expr);
+    printf("{\n%s", expr);
     if($2->rows == 1)
         printstr = vecprint_string;
     else
@@ -79,12 +79,13 @@ ID '[' slice ']' '[' slice ']' '=' expr ';' {
     printf(printstr, $2->name,
            $2->rows, $2->cols,
            $2->name);
+    printf("}\n");
     free_matrix_val($2);
 } | '$' expr '>' ID ';' %prec '>' {
     char *expr;
     const char *printstr;
     gen_expr(&expr, $2);
-    printf("%s", expr);
+    printf("{\n%s", expr);
     if($2->rows == 1)
         printstr = vecfileprint_string;
     else
@@ -94,17 +95,19 @@ ID '[' slice ']' '[' slice ']' '=' expr ';' {
 	   $2->cols,
 	   $4, $2->name,
 	   $4);
+    printf("}\n");
     free_matrix_val($2);
     free($4);
 } | '$' expr '<' ID ';' %prec '<' {
     char *expr;
     const char *printstr;
     gen_expr(&expr, $2);
-    printf("%s", expr);
+    printf("{\n%s", expr);
     printf(matfileread_string,
 	   $2->rows,
 	   $2->cols,
 	   $4, $2->name);
+    printf("}\n");
     free_matrix_val($2);
     free($4);
 } | '%' ID '=' expr ';' {
@@ -121,7 +124,7 @@ ID '[' slice ']' '[' slice ']' '=' expr ';' {
         yyerror("Bad diagonal assignment\n");
         exit(1);
     }
-    printf("{%s\n", expr);
+    printf("{\n%s", expr);
     printf(matrixdiagassign_string,
            $4->cols, $2, $4->name);
     printf("}\n");
