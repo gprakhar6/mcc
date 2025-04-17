@@ -22,6 +22,8 @@ int main() {
 	    matrix f[6][6];
 	    matrix xx[6][1];
 	    matrix norm[1][1];
+	    matrix a->b[3][3];
+	    a->b = ~a->b;
 	    x = (1.0+f)*x;
 	    norm = ((~x) * x);
 	    x =  x / norm;
