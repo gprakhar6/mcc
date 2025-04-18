@@ -200,6 +200,13 @@ static char matvecfunc_string[] =
     "    "
         "%s(%s, %s);\n"
     "}\n";
+static char matvecfuncargs_string[] =
+    "double %s[%d][%d];\n"
+    "{\n"
+        "%s"
+    "    "
+        "%s(%s, %s, %s);\n"
+    "}\n";
 static char matfunc_string[] =
     "double %s[%d][%d];\n"
     "{\n"

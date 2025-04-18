@@ -110,6 +110,7 @@ int inMatrix = 0;
     ")"        { return ')'; }
     "|"        { return '|'; } // matrix column concat
     "_"        { return '_'; } // matrix row concat
+    ","        { return ','; } // argument separator
     [ \t\r\n]+  { /* skip whitespace in DSL region */ }
     .         { /* ignore unexpected characters */ }
 }

@@ -18,6 +18,7 @@ int totdiv = 0;
     double fval;
     int ival;
     MatrixSlice *ms;
+    MatrixFuncArgs *margs;
 }
 
 /* Tokens and their types */
@@ -29,13 +30,16 @@ int totdiv = 0;
  /* Nonterminals that produce a MatrixVal* will use the 'md' field from the union. */
 %type <md> expr term factor statement
 %type <ms> slice
+%type <margs> argument_list argument
  /* Operator precedences */
 %nonassoc '='
 %left '+' '-'
 %left '*' '/'
 %left '|' '_'
+%left ','
 %right '!' '~' '%'
 %right '@' '$' '>' '<'
+
 %nonassoc SLICE
 %nonassoc '[' ']'  // give [] its own precedence
 %nonassoc UMINUS
@@ -153,6 +157,22 @@ term {
              expr,
              $2, temp->name, $4->name);
     
+    free_matrix_val($4);
+    free($2);
+    $$ = temp;
+} | '@' ID '(' expr ',' argument_list ')' %prec '@' {
+    char *expr;
+    gen_expr(&expr, $4);
+    
+    MatrixVal *temp = new_temp($4->rows, $4->cols);
+
+    asprintf(&temp->expr, matvecfuncargs_string,
+             temp->name, temp->rows, temp->cols,
+             expr,
+             $2, temp->name, $4->name, $6->arg_list);
+
+    free($6->arg_list);
+    free($6);
     free_matrix_val($4);
     free($2);
     $$ = temp;
@@ -316,6 +336,45 @@ term {
     $$ = matrix_div_expr($1, $3);
     free_matrix_val($1);
     free_matrix_val($3);
+}
+;
+
+argument_list:
+argument {
+    $$ = $1;
+} | argument_list ',' argument {
+    MatrixFuncArgs *args;
+    args = (MatrixFuncArgs *)malloc(sizeof(MatrixFuncArgs));
+    asprintf(&args->arg_list, "%s, %s", $1->arg_list, $3->arg_list);
+    args->nums = $1->nums + $3->nums;
+    free($1->arg_list);
+    free($1);
+    free($3->arg_list);
+    free($3);
+    $$ = args;
+}
+;
+
+argument:
+ID {
+    MatrixFuncArgs *args;
+    args = (MatrixFuncArgs *)malloc(sizeof(MatrixFuncArgs));
+    asprintf(&args->arg_list, "%s", $1);
+    args->nums = 1;
+    free($1);
+    $$ = args;
+} | FLOAT {
+    MatrixFuncArgs *args;
+    args = (MatrixFuncArgs *)malloc(sizeof(MatrixFuncArgs));
+    asprintf(&args->arg_list, "%20.15lf", $1);
+    args->nums = 1;
+    $$ = args;
+} | INT {
+    MatrixFuncArgs *args;
+    args = (MatrixFuncArgs *)malloc(sizeof(MatrixFuncArgs));
+    asprintf(&args->arg_list, "%d", $1);
+    args->nums = 1;
+    $$ = args;
 }
 ;
 

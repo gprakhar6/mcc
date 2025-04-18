@@ -1,5 +1,9 @@
 #include <stdio.h>
 
+void vecfunc(double tx[6][1], double x[6][1], int e, double m )
+{
+    
+}
 
 int main() {
     printf("Before DSL block\n");
@@ -29,6 +33,7 @@ int main() {
 	    x =  x / norm;
 	    x = sqrt(x);
 	    $x > fp;
+	    $@vecfunc(x,10, hello, 10.4);
 	    //xx = x / x;
 	}
     }

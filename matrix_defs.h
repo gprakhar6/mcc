@@ -21,6 +21,11 @@ typedef struct {
     int cr; // complete range or not
 } MatrixSlice;
 
+typedef struct {
+    char *arg_list;
+    int nums;
+} MatrixFuncArgs;
+
 extern int symbol_count;
 
 extern int totadd;

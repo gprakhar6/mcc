@@ -44,6 +44,8 @@ double A[3][3], B[3][3], C[3][3];
     matrix of same size
 14. If you do @func(x), then func input parameters should be (double out[r][c], double in[r][c]). It
     essentially helps in giving vector input and getting a transformed vector output
+
+15. You can pass @func(x, args[, ...]). So that vector function can accept more arguments
     
 # INSTALL
 
