@@ -746,7 +746,7 @@ right_scalar_mul:
              expr,
              temp->rows,
              temp->cols,
-             temp->name, e1->name, e2->fval);
+             temp->name, e1->name, "*", e2->fval);
     goto fin_mul;    
 left_scalar_mul:
     totmul += e2->rows * e2->cols;
