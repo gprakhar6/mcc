@@ -22,8 +22,7 @@ int main() {
     int i;
     for(i = 0; i < 10000; i++) {
 	@matrix {
-	    matrix x[6][1];
-	    matrix f[6][6];
+	    matrix x[6][1],f[6][6];
 	    matrix xx[6][1];
 	    matrix norm[1][1];
 	    matrix a->b[3][3];

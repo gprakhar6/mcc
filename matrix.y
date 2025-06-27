@@ -52,11 +52,7 @@ program:
 
 statement:
 /* Matrix declaration: e.g., matrix A[3][4]; */
-MATRIX_KW ID '[' INT ']' '[' INT ']' ';' {
-    int r = $4;
-    int c = $7;
-    add_matrix($2, r, c);
-    free($2);
+MATRIX_KW decl_list ';' {
 }
 | /* Assignment statement: e.g., A = (B + C) + D; */
 ID '=' expr ';' {
@@ -375,6 +371,19 @@ ID {
     asprintf(&args->arg_list, "%d", $1);
     args->nums = 1;
     $$ = args;
+}
+;
+
+decl_list:
+decl | decl_list ',' decl
+;
+
+decl:
+ID '[' INT ']' '[' INT ']' {
+    int r = $3;
+    int c = $6;
+    add_matrix($1, r, c);
+    free($1);
 }
 ;
 
