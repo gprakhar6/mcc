@@ -87,6 +87,7 @@ int inMatrix = 0;
 	      printf("/* totdiv = %d */\n", totdiv);
             }
     "matrix"  { return MATRIX_KW; }
+    "double"  { return DOUBLE_KW; }
     [0-9]+    { yylval.ival = atoi(yytext); return INT; }
     [A-Za-z](([A-Za-z0-9_\.])|(->))*  { yylval.str = strdup(yytext); return ID; }
     (([0-9]+)?\.[0-9]+)|([0-9]+\.([0-9]+*)?) { yylval.fval = atof(yytext); return FLOAT; }

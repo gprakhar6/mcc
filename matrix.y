@@ -23,6 +23,7 @@ int totdiv = 0;
 
 /* Tokens and their types */
 %token MATRIX_KW
+%token DOUBLE_KW
 %token <str> ID
 %token <ival> INT
 %token <fval> FLOAT
@@ -54,7 +55,9 @@ statement:
 /* Matrix declaration: e.g., matrix A[3][4]; */
 MATRIX_KW decl_list ';' {
 }
-| /* Assignment statement: e.g., A = (B + C) + D; */
+|
+DOUBLE_KW double_decl_list ';' {
+} | /* Assignment statement: e.g., A = (B + C) + D; */
 ID '=' expr ';' {
     MatrixEntry *dest = lookup_matrix($1);
     mat_assign_expr(dest, $3);
@@ -374,6 +377,19 @@ ID {
 }
 ;
 
+double_decl_list:
+double_decl | double_decl_list ',' double_decl
+;
+
+double_decl:
+ID {
+    int r = 1;
+    int c = 1;
+    add_matrix($1, r, c, 1);
+    free($1); 
+}
+;
+
 decl_list:
 decl | decl_list ',' decl
 ;
@@ -382,7 +398,7 @@ decl:
 ID '[' INT ']' '[' INT ']' {
     int r = $3;
     int c = $6;
-    add_matrix($1, r, c);
+    add_matrix($1, r, c, 0);
     free($1);
 }
 ;
@@ -400,21 +416,19 @@ factor { $$ = $1; }
 factor:
 INT {
     MatrixVal *f =(MatrixVal *)malloc(sizeof(MatrixVal));
-    f->name = NULL;
+    asprintf(&f->name, "%d", $1);
     f->expr = NULL;
     f->rows = 1;
     f->cols = 1;
-    f->fval = (double)$1;
     f->isscalar = 1;
     $$ = f;
 }
 | FLOAT {
     MatrixVal *f =(MatrixVal *)malloc(sizeof(MatrixVal));
-    f->name = NULL;
+    asprintf(&f->name, "%20.15lf", $1);
     f->expr = NULL;
     f->rows = 1;
     f->cols = 1;
-    f->fval = $1;
     f->isscalar = 1;
     $$ = f;
 }
@@ -425,7 +439,18 @@ INT {
         yyerror("Undeclared matrix used in expression");
         exit(1);
     }
-    $$ = make_matrix_val($1, e->rows, e->cols);
+    if(e->isdouble == 0) {
+	$$ = make_matrix_val($1, e->rows, e->cols);
+    }
+    else {
+	MatrixVal *f =(MatrixVal *)malloc(sizeof(MatrixVal));
+	asprintf(&f->name, "%s", e->name);
+	f->expr = NULL;
+	f->rows = 1;
+	f->cols = 1;
+	f->isscalar = 1;
+	$$ = f;	
+    }
 }
 | '(' expr ')' { $$ = $2; }
 ;

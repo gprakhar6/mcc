@@ -12,7 +12,6 @@ typedef struct {
     int rows;
     int cols;
     int isscalar;
-    double fval;
 } MatrixVal;
 
 typedef struct {

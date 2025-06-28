@@ -9,6 +9,7 @@ typedef struct {
     char *name;
     int rows;
     int cols;
+    int isdouble;
 } MatrixEntry;
     
 #define MAX_MATRICES 2048
@@ -28,6 +29,7 @@ void free_matrix_val(MatrixVal *ptr)
     if (ptr->expr != NULL) free(ptr->expr);
     free(ptr);
 }
+
 MatrixVal* make_matrix_val(char *name, int rows, int cols) {
     MatrixVal *val = malloc(sizeof(MatrixVal));
     val->name = name;  /* ownership transferred */
@@ -39,11 +41,12 @@ MatrixVal* make_matrix_val(char *name, int rows, int cols) {
 }
 
 /* Add a new matrix entry to the symbol table */
-void add_matrix(char *name, int rows, int cols) {
+void add_matrix(char *name, int rows, int cols, int isdouble) {
     if (symbol_count < MAX_MATRICES) {
         symbol_table[symbol_count].name = strdup(name);
         symbol_table[symbol_count].rows = rows;
         symbol_table[symbol_count].cols = cols;
+	symbol_table[symbol_count].isdouble = isdouble;
         symbol_count++;
     }
 }
@@ -127,7 +130,7 @@ static char matdiagscalarop_string[] = "double %s[%d][%d];\n"
         "for(int _i=0;_i<%d;_i++)" "{"
             "for(int _j=0;_j<%d;_j++)"
                 "{%s[_i][_j] = %s[_i][_j];}"
-            "%s[_i][_i] %c= %20.15lf;"
+            "%s[_i][_i] %c= %s;"
         "}\n"
     "}\n";
 
@@ -150,7 +153,7 @@ static char matdiagminusleftscalar_string[] =
         "for(int _i=0;_i<%d;_i++)" "{"
             "for(int _j=0;_j<%d;_j++)"
                 "{%s[_i][_j] = -%s[_i][_j];}"
-            "%s[_i][_i] += %20.15lf;"
+            "%s[_i][_i] += %s;"
         "}\n"
     "}\n";
 static char matuminus_string[] =
@@ -266,7 +269,7 @@ static char matrixleftscalarop_string[] =
     "    "
     "for(int _i=0;_i<%d;_i++)"
         "for(int _j=0;_j<%d;_j++)"
-            "{%s[_i][_j] = %20.15lf %c %s[_i][_j];}\n"
+            "{%s[_i][_j] = %s %c %s[_i][_j];}\n"
     "}\n";
 static char matrixscalarop_string[] =
     "double %s[%d][%d];\n"
@@ -275,7 +278,7 @@ static char matrixscalarop_string[] =
     "    "
     "for(int _i=0;_i<%d;_i++)"
         "for(int _j=0;_j<%d;_j++)"
-            "{%s[_i][_j] = %s[_i][_j] %c %20.15lf;}\n"
+            "{%s[_i][_j] = %s[_i][_j] %c %s;}\n"
     "}\n";
 static char matrixcopy_string[] =
     "    for(int _i=0;_i<%d;_i++)" 
@@ -585,7 +588,7 @@ add_right_scalar_to_diagonal:
              temp->name, temp->rows, temp->cols,
              expr,
              temp->rows, temp->cols, temp->name, e1->name,
-             temp->name, '+', e2->fval);
+             temp->name, '+', e2->name);
     goto add_op_fin;
 add_left_row_vector_to_diagonal:
     totadd += e2->rows;
@@ -604,7 +607,7 @@ add_left_scalar_to_diagonal:
              temp->name, temp->rows, temp->cols,
              expr,
              temp->rows, temp->cols, temp->name, e2->name,
-             temp->name, '+', e1->fval);
+             temp->name, '+', e1->name);
     goto add_op_fin;
 add_op_fin:
     free(expr);
@@ -667,7 +670,7 @@ sub_right_scalar_to_diagonal:
              temp->name, temp->rows, temp->cols,
              expr,
              temp->rows, temp->cols, temp->name, e1->name,
-             temp->name, '-', e2->fval);
+             temp->name, '-', e2->name);
     goto sub_op_fin;
 sub_left_row_vector_to_diagonal:
     totsub += e2->rows;
@@ -687,7 +690,7 @@ sub_left_scalar_to_diagonal:
              expr,
              temp->rows, temp->cols,
              temp->name, e2->name,
-             temp->name, e1->fval);
+             temp->name, e1->name);
     goto sub_op_fin;
 sub_op_fin:
     free(expr);
@@ -746,7 +749,7 @@ right_scalar_mul:
              expr,
              temp->rows,
              temp->cols,
-             temp->name, e1->name, "*", e2->fval);
+             temp->name, e1->name, '*', e2->name);
     goto fin_mul;    
 left_scalar_mul:
     totmul += e2->rows * e2->cols;
@@ -756,7 +759,7 @@ left_scalar_mul:
              expr,
              temp->rows,
              temp->cols,
-             temp->name, e2->name, '*', e1->fval);
+             temp->name, e2->name, '*', e1->name);
     goto fin_mul;
 full_mul:
     totmul += e1->rows * e1->cols * e2->cols;
@@ -767,6 +770,7 @@ full_mul:
              temp->rows, temp->cols, e1->cols,
              e1->name, e2->name, temp->name);
     goto fin_mul;
+    
 fin_mul:
     free(expr);
     return temp;
@@ -826,7 +830,7 @@ right_scalar_div:
              expr,
              temp->rows,
              temp->cols,
-             temp->name, e1->name, '/', e2->fval);
+             temp->name, e1->name, '/', e2->name);
     goto fin_div;    
 left_scalar_div:
     totdiv += e2->rows * e2->cols;
@@ -836,7 +840,7 @@ left_scalar_div:
              expr,
              temp->rows,
              temp->cols,
-             temp->name, e1->fval, '/', e2->name);
+             temp->name, e1->name, '/', e2->name);
     goto fin_div;
 full_div:
     totdiv += e1->rows * e1->cols;

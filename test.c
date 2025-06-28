@@ -25,15 +25,16 @@ int main() {
 	    matrix x[6][1],f[6][6];
 	    matrix xx[6][1];
 	    matrix norm[1][1];
+	    double t;
 	    matrix a->b[3][3];
 	    a->b = ~a->b;
 	    x = (1.0+f)*x;
-	    norm = ((~x) * x);
+	    norm = ((~x) * x) * t;
 	    x =  x / norm;
 	    x = sqrt(x);
 	    $x > fp;
 	    $@vecfunc(x,10, hello, 10.4);
-	    //xx = x / x;
+	    xx = x / x;
 	}
     }
     printf("After DSL block\n");
