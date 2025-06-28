@@ -46,7 +46,9 @@ double A[3][3], B[3][3], C[3][3];
     essentially helps in giving vector input and getting a transformed vector output
 
 15. You can pass @func(x, args[, ...]). So that vector function can accept more arguments
-    
+16. You can decalre double variable also now
+17. matrix declaration can be in one line itself
+
 # INSTALL
 
 1. flex + bison is a prerequisite
