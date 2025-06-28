@@ -15,7 +15,7 @@ int inMatrix = 0;
 %%
 
 "/*" {
-    /* Ignore everything until the end of the comment */
+        /* Ignore everything until the end of the comment */
 	/* Ignore everything until the end of the comment */
 	int c;
 	printf("/*");
@@ -52,15 +52,34 @@ int inMatrix = 0;
 }
 
 <MATRIX>{
+    "`;" {
+	/* Ignore everything until the end of the comment */
+	int c;
+	while ((c = input()) != EOF) {
+	    if (c == '`') {
+		if((c = input()) == ';') {
+		    putchar('\n');
+		    break;   
+		}
+		else
+		    putchar(c);
+	    }
+	    putchar(c);
+	}
+    }
     "/*" {
 	/* Ignore everything until the end of the comment */
 	int c;
 	printf("/*");
 	while ((c = input()) != EOF) {
 	    putchar(c);
-	    if (c == '*' && input() == '/') {
-		putchar('/'); putchar('\n');
-		break;
+	    if (c == '*') {
+		if((c = input()) == '/') {
+		    putchar(c); putchar('\n');
+		    break;
+		}
+		else
+		    putchar(c);
 	    }
 	}
     }

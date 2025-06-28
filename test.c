@@ -35,6 +35,12 @@ int main() {
 	    $x > fp;
 	    $@vecfunc(x,10, hello, 10.4);
 	    xx = x / x;
+	    `;
+	    if(t == 0)
+		x = 0;
+	    else
+		x = 1;
+	    `;
 	}
     }
     printf("After DSL block\n");

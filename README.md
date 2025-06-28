@@ -48,6 +48,14 @@ double A[3][3], B[3][3], C[3][3];
 15. You can pass @func(x, args[, ...]). So that vector function can accept more arguments
 16. You can decalre double variable also now
 17. matrix declaration can be in one line itself
+18. You can now have C blocks inside matrix blocks with `; `; quotes. so you can do now
+```c
+@matrix {
+`;
+  C_STATEMENTS
+`;
+}
+```
 
 # INSTALL
 
