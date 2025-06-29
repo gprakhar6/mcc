@@ -284,6 +284,10 @@ static char matrixcopy_string[] =
     "    for(int _i=0;_i<%d;_i++)" 
             "for(int _j=0;_j<%d;_j++)"
                 "{%s[_i][_j] = %s[_i][_j];}\n";
+static char matrixscalarassgn_string[] =
+    "    for(int _i=0;_i<%d;_i++)" 
+            "for(int _j=0;_j<%d;_j++)"
+                "{%s[_i][_j] = %s;}\n";
 static char matrixslice_string[] =
     "double %s[%d][%d];\n"
     "{\n"
@@ -336,7 +340,9 @@ static char matrixdiag_string[] =
 static char matrixdiagassign_string[] =
     "    for(int _i=0;_i<%d;_i++)"
         "{%s[_i][_i] = %s[0][_i];}\n";
-    
+static char matrixdiagassignscalar_string[] =
+    "    for(int _i=0;_i<%d;_i++)"
+        "{%s[_i][_i] = %s;}\n";    
 char *new_temp_name(void) {
     char buf[32];
     sprintf(buf, "_TEMP%d", temp_count++);
@@ -469,17 +475,25 @@ void mat_assign_expr(MatrixEntry *dest, MatrixVal *e)
         exit(1);
     }
     gen_expr(&expr, e);
-    if((dest->rows != e->rows)
-       || (dest->cols != e->cols)) {
-        printf("bad mat equality %s[%d][%d] = [%d][%d]\n",
-               dest->name, dest->rows, dest->cols, e->rows, e->cols);
-        yyerror("bad mat equality\n");
-        exit(1);
+    if(e->isscalar != 1) {
+	if((dest->rows != e->rows)
+	   || (dest->cols != e->cols)) {
+	    printf("bad mat equality %s[%d][%d] = [%d][%d]\n",
+		   dest->name, dest->rows, dest->cols, e->rows, e->cols);
+	    yyerror("bad mat equality\n");
+	    exit(1);
+	}
+	printf("{\n%s", expr);
+	printf(matrixcopy_string, dest->rows, dest->cols,
+	       dest->name, e->name);
+	printf("}\n");
     }
-    printf("{\n%s", expr);
-    printf(matrixcopy_string, dest->rows, dest->cols,
-           dest->name, e->name);
-    printf("}\n");
+    else {
+	printf("{\n%s", expr);
+	printf(matrixscalarassgn_string, dest->rows, dest->cols,
+	       dest->name, e->name);
+	printf("}\n");
+    }
 }
 
 void matrix_slice_assign(char *id_name,

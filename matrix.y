@@ -119,19 +119,26 @@ ID '[' slice ']' '[' slice ']' '=' expr ';' {
     MatrixEntry *m = lookup_matrix($2);
 
     gen_expr(&expr, $4);
-    if (!(($4->rows == 1) && ($4->cols == m->cols)
-          && (m->rows == m->cols))) {
-        printf("Bad diagonal assignment %% %s[%d][%d] = [%d][%d]\n",
-               m->name, m->rows, m->cols,
-               $4->rows, $4->cols);
-        yyerror("Bad diagonal assignment\n");
-        exit(1);
+    if($4->isscalar != 1) {
+	if (!(($4->rows == 1) && ($4->cols == m->cols)
+	      && (m->rows == m->cols))) {
+	    printf("Bad diagonal assignment %% %s[%d][%d] = [%d][%d]\n",
+		   m->name, m->rows, m->cols,
+		   $4->rows, $4->cols);
+	    yyerror("Bad diagonal assignment\n");
+	    exit(1);
+	}
+	printf("{\n%s", expr);
+	printf(matrixdiagassign_string,
+	       $4->cols, $2, $4->name);
+	printf("}\n");
     }
-    printf("{\n%s", expr);
-    printf(matrixdiagassign_string,
-           $4->cols, $2, $4->name);
-    printf("}\n");
-    
+    else {
+	printf("{\n%s", expr);
+	printf(matrixdiagassignscalar_string,
+	       m->cols, $2, $4->name);
+	printf("}\n");
+    }
     free($2);
     free_matrix_val($4);
 }

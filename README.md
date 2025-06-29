@@ -49,6 +49,9 @@ double A[3][3], B[3][3], C[3][3];
 16. You can decalre double variable also now
 17. matrix declaration can be in one line itself
 18. You can now have C blocks inside matrix blocks with `; `; quotes. so you can do now
+19. You can now assign matrix to scalar. So %p = 1.0, will assign all diagnals to 1 and
+    p = 1.0 will assign all p to 1.0
+
 ```c
 @matrix {
 `;
