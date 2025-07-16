@@ -1,5 +1,6 @@
 %{
-#include "matrix_defs.h"    /* Now MatrixVal is declared! */    
+#include "matrix_defs.h"    /* Now MatrixVal is declared! */
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>    
@@ -141,6 +142,46 @@ ID '[' slice ']' '[' slice ']' '=' expr ';' {
     }
     free($2);
     free_matrix_val($4);
+} | ID '=' '@' ID '(' expr ')' ';' %prec '@' {
+    char *expr;
+    gen_expr(&expr, $6);
+    MatrixEntry *e = lookup_matrix($1);
+    if (!e) {
+        yyerror("Undeclared matrix assgined by function\n");
+        exit(1);
+    }
+    MatrixVal *temp = new_temp(e->rows, e->cols);
+
+    asprintf(&temp->expr, matvecfunc_string,
+             temp->name, temp->rows, temp->cols,
+             expr,
+             $4, temp->name, $6->name);
+    
+    free_matrix_val($6);
+    free($4);
+    free($1);
+    $$ = temp;
+} | ID '=' '@' ID '(' expr ',' argument_list ')' ';' %prec '@' {
+    char *expr;
+    gen_expr(&expr, $6);
+    MatrixEntry *e = lookup_matrix($1);
+    if (!e) {
+        yyerror("Undeclared matrix assgined by function\n");
+        exit(1);
+    }
+    MatrixVal *temp = new_temp(e->rows, e->cols);
+
+    asprintf(&temp->expr, matvecfuncargs_string,
+             temp->name, temp->rows, temp->cols,
+             expr,
+             $4, temp->name, $6->name, $8->arg_list);
+
+    free($8->arg_list);
+    free($8);
+    free_matrix_val($6);
+    free($4);
+    free($1);
+    $$ = temp;
 }
 ;
 
@@ -152,52 +193,6 @@ term {
     free_matrix_val($1);
     free($3);
     free($6);
-} | '@' ID '(' expr ')' %prec '@' {
-    char *expr;
-    gen_expr(&expr, $4);
-    
-    MatrixVal *temp = new_temp($4->rows, $4->cols);
-
-    asprintf(&temp->expr, matvecfunc_string,
-             temp->name, temp->rows, temp->cols,
-             expr,
-             $2, temp->name, $4->name);
-    
-    free_matrix_val($4);
-    free($2);
-    $$ = temp;
-} | '@' ID '(' expr ',' argument_list ')' %prec '@' {
-    char *expr;
-    gen_expr(&expr, $4);
-    
-    MatrixVal *temp = new_temp($4->rows, $4->cols);
-
-    asprintf(&temp->expr, matvecfuncargs_string,
-             temp->name, temp->rows, temp->cols,
-             expr,
-             $2, temp->name, $4->name, $6->arg_list);
-
-    free($6->arg_list);
-    free($6);
-    free_matrix_val($4);
-    free($2);
-    $$ = temp;
-} | ID '(' expr ')' {
-    char *expr;
-    gen_expr(&expr, $3);
-    
-    MatrixVal *temp = new_temp($3->rows, $3->cols);
-
-    asprintf(&temp->expr, matfunc_string,
-             temp->name, temp->rows, temp->cols,
-             expr,
-             temp->rows,
-	     temp->cols,
-             temp->name, $1, $3->name);
-    
-    free_matrix_val($3);
-    free($1);
-    $$ = temp;
 } | '%' expr %prec '%' {
     char *expr;
     if($2->rows != $2->cols) {
@@ -342,6 +337,22 @@ term {
     $$ = matrix_div_expr($1, $3);
     free_matrix_val($1);
     free_matrix_val($3);
+} | ID '(' expr ')' {
+    char *expr;
+    gen_expr(&expr, $3);
+    
+    MatrixVal *temp = new_temp($3->rows, $3->cols);
+
+    asprintf(&temp->expr, matfunc_string,
+             temp->name, temp->rows, temp->cols,
+             expr,
+             temp->rows,
+	     temp->cols,
+             temp->name, $1, $3->name);
+    
+    free_matrix_val($3);
+    free($1);
+    $$ = temp;
 }
 ;
 
@@ -465,5 +476,5 @@ INT {
 %%
 
 void yyerror(const char *s) {
-    fprintf(stderr, "Error: %s\n", s);
+    fprintf(stderr, "yyerror: %s\n", s);
 }
