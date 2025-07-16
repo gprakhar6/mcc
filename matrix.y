@@ -150,17 +150,13 @@ ID '[' slice ']' '[' slice ']' '=' expr ';' {
         yyerror("Undeclared matrix assgined by function\n");
         exit(1);
     }
-    MatrixVal *temp = new_temp(e->rows, e->cols);
-
-    asprintf(&temp->expr, matvecfunc_string,
-             temp->name, temp->rows, temp->cols,
-             expr,
-             $4, temp->name, $6->name);
+    printf(matvecfunc_string,
+	   expr,
+	   $4, e->name, $6->name);
     
     free_matrix_val($6);
     free($4);
     free($1);
-    $$ = temp;
 } | ID '=' '@' ID '(' expr ',' argument_list ')' ';' %prec '@' {
     char *expr;
     gen_expr(&expr, $6);
@@ -169,19 +165,15 @@ ID '[' slice ']' '[' slice ']' '=' expr ';' {
         yyerror("Undeclared matrix assgined by function\n");
         exit(1);
     }
-    MatrixVal *temp = new_temp(e->rows, e->cols);
-
-    asprintf(&temp->expr, matvecfuncargs_string,
-             temp->name, temp->rows, temp->cols,
-             expr,
-             $4, temp->name, $6->name, $8->arg_list);
-
+    printf(matvecfuncargs_string,
+	   expr,
+	   $4, e->name, $6->name, $8->arg_list);
+    
     free($8->arg_list);
     free($8);
     free_matrix_val($6);
     free($4);
     free($1);
-    $$ = temp;
 }
 ;
 

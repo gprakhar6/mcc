@@ -197,14 +197,12 @@ static char matdiv_string[] =
                 "{%s[_i][_j] = %s[_i][_j]/%s[_i][_j];}\n"
     "}\n";
 static char matvecfunc_string[] =
-    "double %s[%d][%d];\n"
     "{\n"
         "%s"
     "    "
         "%s(%s, %s);\n"
     "}\n";
 static char matvecfuncargs_string[] =
-    "double %s[%d][%d];\n"
     "{\n"
         "%s"
     "    "
